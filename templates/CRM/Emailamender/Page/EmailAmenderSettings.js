@@ -147,7 +147,7 @@ jQuery('.add_new_compound_tld').click( function(){
 });
 
 jQuery('#email_amender_enabled').click( function (){ 
-	cj().crmAPI ('EmailAmender','update_settings',{ 'sequential' :'1', 'email_amender_enabled' : jQuery(this).is(':checked') }
+	cj().crmAPI ('EmailAmender','update_settings',{ 'sequential' :'1', 'email_amender_enabled' : jQuery(this).is(':checked').toString() }
   		,{ success:function (data){    
 
 		}
