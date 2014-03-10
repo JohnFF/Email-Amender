@@ -20,4 +20,5 @@
   <civix>
     <namespace>CRM/Emailamender</namespace>
   </civix>
+  <url desc="documentation">https://github.com/JohnFF/Email-Amender/wiki</url>
 </extension>
