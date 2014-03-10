@@ -2,7 +2,11 @@
 <extension key="uk.org.futurefirst.networks.emailamender" type="module">
   <file>emailamender</file>
   <name>Email Amender</name>
-  <description>Automatic correction of email addresses that are added to your database. i.e. john@hotmai.com is corrected to john@hotmail.com. You can add your own correction settings under the Administrator -> System Settings menu. Settings are added automatically upon install, and removed upon delete.</description>
+  <description>Automatic correction of email addresses that are added to your database. i.e. john@hotmai.cpm is corrected to john@hotmail.com. 
+  You can add, remove, and edit the correction settings under the Administrator -> System Settings -> Email Amender menu. 
+  Settings are added automatically upon install, and removed upon delete. 
+  Existing email addresses aren't affected, and the corrections only take place upon edition, not editing. 
+  Automatic correction has to be enabled after install.</description>
   <license>AGPL 3.0</license>
   <maintainer>
     <author>John E Prescott</author>
@@ -10,7 +14,7 @@
   </maintainer>
   <releaseDate>2014-01-26</releaseDate>
   <version>1.0</version>
-  <develStage>alpha</develStage>
+  <develStage>stable</develStage>
   <compatibility>
     <ver>4.2</ver>
     <ver>4.3</ver>
