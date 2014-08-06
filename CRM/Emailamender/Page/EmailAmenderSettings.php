@@ -14,6 +14,8 @@ class CRM_Emailamender_Page_EmailAmenderSettings extends CRM_Core_Page {
     $this->assign('second_level_filter_settings', CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'second_level_domain_corrections'));
     $this->assign('compound_top_level_domains', CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'compound_top_level_domains'));
         
+    $this->assign('equivalent_domain_settings', CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'equivalent_domains'));
+
     parent::run();
   }
 }

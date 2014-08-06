@@ -40,6 +40,10 @@ function civicrm_api3_email_amender_update_corrections($params) {
       $sCivicrmSettingsKey = 'second_level_domain_corrections';
       break;
 
+    case 'equivalent_domain':
+      $sCivicrmSettingsKey = 'equivalent_domains';
+      break;
+
     default:
       return civicrm_api3_create_error(ts("Couldn't update settings - invalid domain level"), 
         array('error_code' => '2', 'field' => 'domain_level')

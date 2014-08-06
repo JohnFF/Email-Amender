@@ -18,7 +18,7 @@ function input_box_change(){
 		thisPassedValidation = true;
 
 		// does it contain a full stop? if so bail
-		if ( jQuery(this).val().indexOf('.') >= 0 && jQuery(this).hasClass('correction_from') ){		
+		if ( jQuery(this).val().indexOf('.') >= 0 && jQuery(this).hasClass('correction_from') && filter_id != 'equivalent_domain' ){
 			jQuery(this).siblings('.error_msg').text('Top level domains can\'t have full stops.');
 			allPassedValidation = false;
 			thisPassedValidation = false;
@@ -119,6 +119,33 @@ jQuery('.add_new_correction').click( function(){
 
 	// Add new delete button
 	var newDeleteButton = jQuery('<a href="#" class="deleteButton" filter_id="' + filter + '">Delete this correction</a>').click( delete_button ); 
+	jQuery('#'+filter+'_table tbody').children().last().children().last().append( newDeleteButton );
+
+	jQuery('#' + filter + '_table' ).find('tr:hidden').fadeIn();
+
+});
+
+// Very similar to .add_new_correction, except we're switching around the display of the 'key' box and the 'value' box
+jQuery('.add_new_equivalent').click( function(){
+	var filter = jQuery(this).attr('filter_id');
+
+	var newFilterRow = '<tr style="display: none"><td style="max-width: 43% !important; min-width: 43% !important; width: 43% !important;"></td><td style="max-width: 43% !important; min-width: 43% !important; width: 43% !important;"></td><td></td></tr>';
+	jQuery('#'+filter+'_table tbody').append( newFilterRow );	
+
+	// Add new input boxes
+	var newFilterTextBox ='<input type="text" originalValue="unset" filter_id="' + filter + '"/>'; 
+	jQuery('#'+filter+'_table tbody').children().last().children(':lt(2)').append( newFilterTextBox );
+	jQuery('#'+filter+'_table tbody').children().last().children(':lt(2)').append( '<span class="error_msg" style="display: none;"></span>' );
+	
+	// add the correction_from and correction_to classes
+	jQuery('#'+filter+'_table tbody').children().last().children(':eq(0)').find('input').addClass( 'correction_to' );
+	jQuery('#'+filter+'_table tbody').children().last().children(':eq(1)').find('input').addClass( 'correction_from' );
+
+	// Add change listener to both new input boxes
+	jQuery('#'+filter+'_table tbody').children().last().find('input').change( input_box_change );
+
+	// Add new delete button
+	var newDeleteButton = jQuery('<a href="#" class="deleteButton" filter_id="' + filter + '">Delete this equivalent</a>').click( delete_button ); 
 	jQuery('#'+filter+'_table tbody').children().last().children().last().append( newDeleteButton );
 
 	jQuery('#' + filter + '_table' ).find('tr:hidden').fadeIn();

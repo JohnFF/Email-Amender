@@ -33,4 +33,6 @@ An activity of type "Amended Email" is recorded every time a correction is made,
 <input class="add_new_compound_tld" type="button" value="Add new compound tld" filter_id="compound_tld"></input>
 <input class="save_tld_changes save_changes_button" type="button" value="Save changes" style="display: none" filter_id="compound_tld"></input>
 </div>
+<br/><br/>
+{include file="CRM/Emailamender/Page/EquivalentsTable.tpl" title='Equivalent Domains' data=$equivalent_domain_settings filter_id="equivalent_domain"}
 {include file="CRM/Emailamender/Page/EmailAmenderSettings.js"}
