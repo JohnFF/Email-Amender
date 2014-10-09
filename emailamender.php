@@ -340,23 +340,8 @@ function emailamender_try_equivalent($sEmailToTry) {
 function emailamender_civicrm_emailProcessorContact($email, $contactID, &$result) {
   // Check for already valid contact ID
   if ($contactID) {
-    // There doesn't seem to be a value for 'I didn't need to change the ID, but don't skip this address'
-    $result = array('contactID' => $contactID, 'action' => CRM_Utils_Mail_Incoming::EMAILPROCESSOR_OVERRIDE);
-    return;
-  }
-
-  // check that it has only one '@' - shouldn't need to do this but just in case
-  if (substr_count($email, '@') != 1) {
-    CRM_Core_Error::debug_log_message("emailamender_civicrm_emailProcessorContact: Invalid e-mail address $email");
-    $result = array('contactID' => $contactID, 'action' => CRM_Utils_Mail_Incoming::EMAILPROCESSOR_IGNORE);
-    return;
-  }
-
-  // Check if contact with exact address exists, even though we weren't passed an ID (shouldn't happen)
-  $contactID = emailamender_try_equivalent($email);
-  if ($contactID) {
-    CRM_Core_Error::debug_log_message("emailamender_civicrm_emailProcessorContact: Passed null contact ID on existing e-mail address $email");
-    $result = array('contactID' => $contactID, 'action' => CRM_Utils_Mail_Incoming::EMAILPROCESSOR_OVERRIDE);
+    // Leave the default behaviour, which (unless another implementation of the hook has changed it)
+    // is to use this already-known contact ID
     return;
   }
 
@@ -383,7 +368,8 @@ function emailamender_civicrm_emailProcessorContact($email, $contactID, &$result
   }
 
   // No existing contact ID with an equivalent e-mail address was found
-  $result = array('contactID' => $contactID, 'action' => CRM_Utils_Mail_Incoming::EMAILPROCESSOR_CREATE_INDIVIDUAL);
+  // Leave the default behaviour, which (unless another implementation of the hook has changed it)
+  // is to create a new contact with this e-mail address
 }
 
 /**
