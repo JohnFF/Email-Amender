@@ -1,6 +1,3 @@
-{literal}
-<script type="text/javascript" language="javascript">
-
 function on_any_change( filter_id ){
 	jQuery('#'+filter_id).children('h3').css('background-color', '#98FB98');
 	jQuery('#'+filter_id).children('.save_changes_button').fadeIn();
@@ -192,7 +189,3 @@ jQuery('h3').css('-moz-transition', 'background-color 0.4s linear');
 jQuery('h3').css('-ms-transition', 'background-color 0.4s linear');
 jQuery('h3').css('-o-transition', 'background-color 0.4s linear');
 jQuery('h3').css('transition', 'background-color 0.4s linear'); 
-
-</script>
-{/literal}
-

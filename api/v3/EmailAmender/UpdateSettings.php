@@ -31,7 +31,7 @@ function _civicrm_api3_email_amender_update_settings_safely($key, &$params){
 function civicrm_api3_email_amender_update_settings($params) {
    // TODO why doesn't this work? _civicrm_api3_system_settings_update_safely('email_amender_enabled', $params);
 
-    CRM_Core_BAO_Setting::setItem(mysql_real_escape_string($params['email_amender_enabled']), 'uk.org.futurefirst.networks.emailamender', 'email_amender_enabled');
+    CRM_Core_BAO_Setting::setItem(mysql_real_escape_string($params['email_amender_enabled']), 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled');
 
     return civicrm_api3_create_success($returnValues, $params, 'EmailAmender', 'update_settings');
 

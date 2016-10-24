@@ -33,15 +33,15 @@ function civicrm_api3_email_amender_update_corrections($params) {
   
   switch($params['domain_level']){
     case 'top_level_domain':
-      $sCivicrmSettingsKey = 'top_level_domain_corrections';
+      $sCivicrmSettingsKey = 'emailamender.top_level_domain_corrections';
       break;
 
     case 'second_level_domain':
-      $sCivicrmSettingsKey = 'second_level_domain_corrections';
+      $sCivicrmSettingsKey = 'emailamender.second_level_domain_corrections';
       break;
 
     case 'equivalent_domain':
-      $sCivicrmSettingsKey = 'equivalent_domains';
+      $sCivicrmSettingsKey = 'emailamender.equivalent_domains';
       break;
 
     default:
