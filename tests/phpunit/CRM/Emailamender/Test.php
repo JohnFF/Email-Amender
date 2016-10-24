@@ -36,18 +36,25 @@ class CRM_Emailamender_Test extends \PHPUnit_Framework_TestCase implements Headl
     parent::tearDown();
   }
 
-  /**
-   * Example: Test that a version is returned.
-   */
-  public function testWellFormedVersion() {
-    $this->assertRegExp('/^([0-9\.]|alpha|beta)*$/', \CRM_Utils_System::version());
+  public function testCorrection_ContactCreateApi() {
+
+    CRM_Core_BAO_Setting::setItem(1, 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled');
+    
+    $createContactResults = civicrm_api('Contact', 'create', array(
+      'version' => 3,
+      'sequential' => 1,
+      'contact_type' => 'individual',
+      'email' => 'john@yaho.com',
+    ));
+
+    $getEmailAddressResults = civicrm_api('Email', 'get', array(
+      'version' => 3,
+      'sequential' => 1,
+      'contact_id' => $createContactResults['id'],
+    ));
+
+    $this->assertEquals('john@yahoo.com', $getEmailAddressResults['values'][0]['email']);
   }
 
-  /**
-   * Example: Test that we're using a fake CMS.
-   */
-  public function testWellFormedUF() {
-    $this->assertEquals('UnitTests', CIVICRM_UF);
-  }
 
 }
