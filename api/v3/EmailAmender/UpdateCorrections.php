@@ -51,7 +51,7 @@ function civicrm_api3_email_amender_update_corrections($params) {
   }
 
   foreach( $params['correction_keys'] as $index => $correctionKey ){
-    $aEscapedCorrections[mysql_real_escape_string($correctionKey)] = mysql_real_escape_string($params['correction_values'][$index]);
+    $aEscapedCorrections[CRM_Core_DAO::escapeString(correctionKey)] = CRM_Core_DAO::escapeString($params['correction_values'][$index]);
   }
 
   CRM_Core_BAO_Setting::setItem($aEscapedCorrections, 'uk.org.futurefirst.networks.emailamender', $sCivicrmSettingsKey);
