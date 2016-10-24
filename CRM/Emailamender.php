@@ -51,7 +51,7 @@ class CRM_Emailamender {
   static function emailamender_reassemble_email($aEmailPieces, $aDomainPartPieces) {
     $aDomainPartPieces = array_reverse( $aDomainPartPieces );
     $aEmailPieces[1] = implode('.', $aDomainPartPieces);
-    $sCleanedEmail = mysql_real_escape_string(implode('@', $aEmailPieces));
+    $sCleanedEmail = CRM_Core_DAO::escapeString(implode('@', $aEmailPieces));
     return $sCleanedEmail;
   }
   
