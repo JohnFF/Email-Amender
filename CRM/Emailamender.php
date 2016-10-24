@@ -67,7 +67,7 @@ class CRM_Emailamender {
     }
 
     // 5. explode the string into the local part and the domain part
-    emailamender_parse_email_byref($sRawEmail, $aEmailPieces, $aDomainPartPieces);
+    self::emailamender_parse_email_byref($sRawEmail, $aEmailPieces, $aDomainPartPieces);
 
     // 6. load settings and init
     $aTopLevelFilterSettings    = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections' );
