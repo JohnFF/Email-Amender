@@ -118,6 +118,30 @@ class CRM_Emailamender_IntegrationTest extends \PHPUnit_Framework_TestCase imple
     $this->assertEquals(0, self::getCorrectedEmailAddressActivityCount($emailDetails['contact_id']));
   }
 
+  /**
+   * Ensures that two corrections of the same type doesn't cause a problem.
+   */
+  public function testTwoCorrections() {
+    $emailDetails = self::createTestContact('john@yaho.com');
+    civicrm_api('Email', 'create', array(
+      'version' => 3,
+      'sequential' => 1,
+      'contact_id' => $emailDetails['contact_id'],
+      'location_type_id' => 1,
+      'email' => 'john@yaho.com',
+    ));
+
+    $getEmailResults = civicrm_api('Email', 'get', array(
+      'version' => 3,
+      'sequential' => 1,
+      'contact_id' => $emailDetails['contact_id'],
+      'location_type_id' => 1,
+      'email' => 'john@yahoo.com',
+    ));
+    
+    $this->assertEquals(2, $getEmailResults['count']);
+  }
+  
   public function testApiEmailAddressUpdateApi(){}
 
   public function testCsvImportCreateContact(){}
