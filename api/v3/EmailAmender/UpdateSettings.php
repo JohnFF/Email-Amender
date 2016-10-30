@@ -9,14 +9,7 @@
  * @see http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
  */
 function _civicrm_api3_email_amender_update_settings_spec(&$spec) {
-//  $spec['magicword']['api.required'] = 1;
-}
-
-function _civicrm_api3_email_amender_update_settings_safely($key, &$params){
-  // TODO move to common functionality file
-  if (!array_key_exists($key, $params)) {
-    throw new API_Exception('Missing Array Key '.$key, 1);
-  } // TODO else that mysql_real_escapes everything
+  $spec['email_amender_enabled']['api.required'] = 1;
 }
 
 /**
@@ -29,10 +22,13 @@ function _civicrm_api3_email_amender_update_settings_safely($key, &$params){
  * @throws API_Exception
  */
 function civicrm_api3_email_amender_update_settings($params) {
-   // TODO why doesn't this work? _civicrm_api3_system_settings_update_safely('email_amender_enabled', $params);
+  $returnValues = array();
+  
+  CRM_Core_BAO_Setting::setItem(
+    CRM_Core_DAO::escapeString($params['email_amender_enabled']),
+    'uk.org.futurefirst.networks.emailamender',
+    'emailamender.email_amender_enabled'
+  );
 
-    CRM_Core_BAO_Setting::setItem(CRM_Core_DAO::escapeString($params['email_amender_enabled']), 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled');
-
-    return civicrm_api3_create_success($returnValues, $params, 'EmailAmender', 'update_settings');
-
+  return civicrm_api3_create_success($returnValues, $params, 'EmailAmender', 'update_settings');
 }
