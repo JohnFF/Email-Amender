@@ -6,7 +6,7 @@ class CRM_Emailamender {
    *
    * 
    */
-  static function emailamender_performreplacement( &$sDomainFragment, &$aCorrections ){
+  static function performreplacement( &$sDomainFragment, &$aCorrections ){
     if (array_key_exists($sDomainFragment, $aCorrections)){
       $sDomainFragment = $aCorrections[$sDomainFragment];
       return TRUE;
@@ -20,7 +20,7 @@ class CRM_Emailamender {
    *  We want to correct gmai not co 
    *
    */
-  static function emailamender_get_second_domain_part_index( $sDomainPart, &$aCompoundTopLevelDomains ){
+  static function get_second_domain_part_index( $sDomainPart, &$aCompoundTopLevelDomains ){
     foreach ($aCompoundTopLevelDomains as $sCompoundTld){
       if (substr( $sDomainPart, -strlen($sCompoundTld) ) == $sCompoundTld){
         RETURN 2;
@@ -34,7 +34,7 @@ class CRM_Emailamender {
    * Parse a raw email address
    * Sets variables by reference with the pieces.
    */
-  static function emailamender_parse_email_byref($sRawEmail, &$aEmailPieces, &$aDomainPartPieces) {
+  static function parse_email_byref($sRawEmail, &$aEmailPieces, &$aDomainPartPieces) {
     // Explode the string into the local part and the domain part
     $aEmailPieces = explode('@', $sRawEmail);
 
@@ -48,7 +48,7 @@ class CRM_Emailamender {
   /**
    * Reassembles an email address from the pieces
    */
-  static function emailamender_reassemble_email($aEmailPieces, $aDomainPartPieces) {
+  static function reassemble_email($aEmailPieces, $aDomainPartPieces) {
     $aDomainPartPieces = array_reverse( $aDomainPartPieces );
     $aEmailPieces[1] = implode('.', $aDomainPartPieces);
     $sCleanedEmail = CRM_Core_DAO::escapeString(implode('@', $aEmailPieces));
@@ -57,37 +57,38 @@ class CRM_Emailamender {
   
   static function check_for_corrections($iEmailId, $iContactId, $sRawEmail) {
     
+    // 1. Check it's turned on!
     if ( 'false' == CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled' ) ){
       return;
     }
     
-    // 4. check that it has only one '@' - shouldn't need to do this but just in case
+    // 2. Check that the email address has only one '@' - shouldn't need to do this but just in case.
     if (substr_count($sRawEmail, "@") != 1){
       return;
     }
 
-    // 5. explode the string into the local part and the domain part
-    self::emailamender_parse_email_byref($sRawEmail, $aEmailPieces, $aDomainPartPieces);
+    // 3. Explode the string into the local part and the domain part.
+    self::parse_email_byref($sRawEmail, $aEmailPieces, $aDomainPartPieces);
 
-    // 6. load settings and init
+    // 4. Load the settings and initialise.
     $aTopLevelFilterSettings    = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections' );
     $aSecondLevelFilterSettings = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections' );
     $aCompoundTopLevelDomains   = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains' );
-    $iSecondLevelDomainFragmentIndex = self::emailamender_get_second_domain_part_index($aEmailPieces[1], $aCompoundTopLevelDomains);
+    $iSecondLevelDomainFragmentIndex = self::get_second_domain_part_index($aEmailPieces[1], $aCompoundTopLevelDomains);
 
-    // 7. break it up and process it
-    $bTopLevelChanged = self::emailamender_performreplacement( $aDomainPartPieces[0], $aTopLevelFilterSettings );
-    $bSecondLevelChanged = self::emailamender_performreplacement( $aDomainPartPieces[$iSecondLevelDomainFragmentIndex], $aSecondLevelFilterSettings);
+    // 5. Break it up and process it.
+    $bTopLevelChanged = self::performreplacement( $aDomainPartPieces[0], $aTopLevelFilterSettings );
+    $bSecondLevelChanged = self::performreplacement( $aDomainPartPieces[$iSecondLevelDomainFragmentIndex], $aSecondLevelFilterSettings);
 
-    // 8. bail if nothing changed
+    // 6. bail if nothing changed
     if ( !($bTopLevelChanged || $bSecondLevelChanged) ){
       return; 
     }
 
-    // 9. recreate the fixed email address
-    $sCleanedEmail = self::emailamender_reassemble_email($aEmailPieces, $aDomainPartPieces);
+    // 7. recreate the fixed email address
+    $sCleanedEmail = self::reassemble_email($aEmailPieces, $aDomainPartPieces);
 
-    // 10. update the email address
+    // 8. update the email address
     $updateParam = array(
       "version" => 3,
       "id" => $iEmailId,
@@ -96,14 +97,14 @@ class CRM_Emailamender {
 
     civicrm_api("Email", "update", $updateParam);
 
-    // 11. record everything
+    // 9. record everything
     $iActivityTypeId = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amended_activity_type_id' );
-    $results=civicrm_api("Activity", "create", array (
+
+    $results = civicrm_api("Activity", "create", array (
       'version' => '3', 
       'sequential' => '1', 
       'activity_type_id' => $iActivityTypeId, 
-      'source_contact_id' => $iContactId, 
-      'source_record_id' => $iContactId, 
+      'source_contact_id' => $iContactId,
       'target_contact_id' => $iContactId, 
       'assignee_contact_id' => $iContactId,
       'subject' => "Amended Email from $sRawEmail to $sCleanedEmail",
