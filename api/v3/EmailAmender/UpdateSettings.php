@@ -22,13 +22,16 @@ function _civicrm_api3_email_amender_update_settings_spec(&$spec) {
  * @throws API_Exception
  */
 function civicrm_api3_email_amender_update_settings($params) {
-  $returnValues = array();
-  
+
+  if (!in_array($params['email_amender_enabled'], array('false', 'true'))) {
+    throw new API_Exception('Invalid enabled setting.');
+  }
+
   CRM_Core_BAO_Setting::setItem(
-    CRM_Core_DAO::escapeString($params['email_amender_enabled']),
+    $params['email_amender_enabled'],
     'uk.org.futurefirst.networks.emailamender',
     'emailamender.email_amender_enabled'
   );
 
-  return civicrm_api3_create_success($returnValues, $params, 'EmailAmender', 'update_settings');
+  return civicrm_api3_create_success(NULL, $params, 'EmailAmender', 'update_settings');
 }
