@@ -6,7 +6,7 @@ class CRM_Emailamender {
    *
    * 
    */
-  static function performreplacement( &$sDomainFragment, &$aCorrections ){
+  static function perform_replacement( &$sDomainFragment, &$aCorrections ){
     if (array_key_exists($sDomainFragment, $aCorrections)){
       $sDomainFragment = $aCorrections[$sDomainFragment];
       return TRUE;
@@ -18,16 +18,16 @@ class CRM_Emailamender {
   /**
    *  For instances like john@gmai.co.uk where the last two parts are treated like one part of the URL. 
    *  We want to correct gmai not co 
-   *
+   * @return index from end. 
    */
   static function get_second_domain_part_index( $sDomainPart, &$aCompoundTopLevelDomains ){
     foreach ($aCompoundTopLevelDomains as $sCompoundTld){
       if (substr( $sDomainPart, -strlen($sCompoundTld) ) == $sCompoundTld){
-        RETURN 2;
+        return 2;
       }
     }
 
-    RETURN 1;
+    return 1;
   }
 
   /**
@@ -77,30 +77,30 @@ class CRM_Emailamender {
     $iSecondLevelDomainFragmentIndex = self::get_second_domain_part_index($aEmailPieces[1], $aCompoundTopLevelDomains);
 
     // 5. Break it up and process it.
-    $bTopLevelChanged = self::performreplacement( $aDomainPartPieces[0], $aTopLevelFilterSettings );
-    $bSecondLevelChanged = self::performreplacement( $aDomainPartPieces[$iSecondLevelDomainFragmentIndex], $aSecondLevelFilterSettings);
+    $bTopLevelChanged = self::perform_replacement( $aDomainPartPieces[0], $aTopLevelFilterSettings );
+    $bSecondLevelChanged = self::perform_replacement( $aDomainPartPieces[$iSecondLevelDomainFragmentIndex], $aSecondLevelFilterSettings);
 
-    // 6. bail if nothing changed
+    // 6. Bail if nothing changed.
     if ( !($bTopLevelChanged || $bSecondLevelChanged) ){
       return; 
     }
 
-    // 7. recreate the fixed email address
+    // 7. Recreate the fixed email address.
     $sCleanedEmail = self::reassemble_email($aEmailPieces, $aDomainPartPieces);
 
-    // 8. update the email address
+    // 8. Update the email address.
     $updateParam = array(
       "version" => 3,
       "id" => $iEmailId,
       "email" => $sCleanedEmail
     );
 
-    civicrm_api("Email", "update", $updateParam);
+    civicrm_api('Email', 'update', $updateParam);
 
-    // 9. record everything
+    // 9. Record everything.
     $iActivityTypeId = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amended_activity_type_id' );
 
-    $results = civicrm_api("Activity", "create", array (
+    civicrm_api('Activity', 'create', array (
       'version' => '3', 
       'sequential' => '1', 
       'activity_type_id' => $iActivityTypeId, 
