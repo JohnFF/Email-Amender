@@ -19,16 +19,28 @@ class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_
     ));
 
     $this->assign('text', 'contents');
-    
+
     // export form elements
     $this->assign('elementNames', $this->getRenderableElementNames());
     parent::buildQuickForm();
   }
 
   function postProcess() {
-    $values = $this->exportValues();
+    $emailAmender = new CRM_Emailamender();
 
-    die(print_r($this->_contactIds, TRUE));
+    foreach($this->_contactIds as $eachContactId) {
+      $updateParam = array(
+        "version" => 3,
+        "contact_id" => $eachContactId,
+      );
+
+      $emailAddresses = civicrm_api('Email', 'get', $updateParam);
+
+      foreach($emailAddresses['values'] as $eachEmailAddress) {
+        $emailAmender->check_for_corrections($eachEmailAddress['id'], $eachEmailAddress['contact_id'], $eachEmailAddress['email']);
+      }
+    }
+
     parent::postProcess();
   }
 

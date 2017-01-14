@@ -14,10 +14,11 @@ class CRM_Emailamender {
   
   /**
    * Do the main processing of the domain part of the email address
-   *
-   * 
+   * @array string $sDomainFragment e.g. gmai
+   * @array array $aCorrections list of corrections
+   * @return bool replaced or not
    */
-  static function perform_replacement( &$sDomainFragment, &$aCorrections ){
+  private static function perform_replacement( &$sDomainFragment, $aCorrections ){
     if (array_key_exists($sDomainFragment, $aCorrections)){
       $sDomainFragment = $aCorrections[$sDomainFragment];
       return TRUE;
@@ -28,8 +29,9 @@ class CRM_Emailamender {
 
   /**
    *  For instances like john@gmai.co.uk where the last two parts are treated like one part of the URL. 
-   *  We want to correct gmai not co 
-   * @return index from end. 
+   *  We want to correct 'gmai' not 'co' 
+   * @param string $sDomainPart (e.g. gmai.co.uk)
+   * @return index from end (either 1 or 2). 
    */
   private function get_second_domain_part_index( $sDomainPart ){
     foreach ($this->_aCompoundTopLevelDomains as $sCompoundTld){
@@ -45,7 +47,7 @@ class CRM_Emailamender {
    * Parse a raw email address
    * Sets variables by reference with the pieces.
    */
-  static function parse_email_byref($sRawEmail, &$aEmailPieces, &$aDomainPartPieces) {
+  private static function parse_email_byref($sRawEmail, &$aEmailPieces, &$aDomainPartPieces) {
     // Explode the string into the local part and the domain part
     $aEmailPieces = explode('@', $sRawEmail);
 
@@ -58,14 +60,21 @@ class CRM_Emailamender {
 
   /**
    * Reassembles an email address from the pieces
+   * @param array $aEmailPieces
+   * @param array $aDomainPartPieces
+   * @return $sCleanedEmail corrected email e.g. john@hotmail.com
    */
-  static function reassemble_email($aEmailPieces, $aDomainPartPieces) {
+  private static function reassemble_email($aEmailPieces, $aDomainPartPieces) {
     $aDomainPartPieces = array_reverse( $aDomainPartPieces );
     $aEmailPieces[1] = implode('.', $aDomainPartPieces);
     $sCleanedEmail = CRM_Core_DAO::escapeString(implode('@', $aEmailPieces));
     return $sCleanedEmail;
   }
   
+  /**
+   * Returns if the setting to auto correct email addresses is enabled.
+   * @return boolean
+   */
   public function is_autocorrect_enabled(){
     if ( 'false' == CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled' ) ){
       return FALSE;
@@ -73,6 +82,14 @@ class CRM_Emailamender {
     return TRUE;
   }
   
+  /**
+   * Check and perform corrections.
+   * 
+   * @param int $iEmailId
+   * @param int $iContactId
+   * @param string $sRawEmail
+   * @return none
+   */
   public function check_for_corrections($iEmailId, $iContactId, $sRawEmail) {
     
     // 1. Check that the email address has only one '@' - shouldn't need to do this but just in case.
@@ -107,7 +124,7 @@ class CRM_Emailamender {
 
     civicrm_api('Email', 'update', $updateParam);
 
-    // 9. Record everything.
+    // 8. Record the change by an activity.
     $iActivityTypeId = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amended_activity_type_id' );
 
     civicrm_api('Activity', 'create', array (
