@@ -1,6 +1,17 @@
 <?php
 
 class CRM_Emailamender {
+    
+  private $_aTopLevelFilterSettings;
+  private $_aSecondLevelFilterSettings;
+  private $_aCompoundTopLevelDomains;
+  
+  function __construct() {
+    $this->_aTopLevelFilterSettings    = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections' );
+    $this->_aSecondLevelFilterSettings = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections' );
+    $this->_aCompoundTopLevelDomains   = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains' );
+  }
+  
   /**
    * Do the main processing of the domain part of the email address
    *
@@ -20,8 +31,8 @@ class CRM_Emailamender {
    *  We want to correct gmai not co 
    * @return index from end. 
    */
-  static function get_second_domain_part_index( $sDomainPart, &$aCompoundTopLevelDomains ){
-    foreach ($aCompoundTopLevelDomains as $sCompoundTld){
+  private function get_second_domain_part_index( $sDomainPart ){
+    foreach ($this->_aCompoundTopLevelDomains as $sCompoundTld){
       if (substr( $sDomainPart, -strlen($sCompoundTld) ) == $sCompoundTld){
         return 2;
       }
@@ -55,40 +66,39 @@ class CRM_Emailamender {
     return $sCleanedEmail;
   }
   
-  static function check_for_corrections($iEmailId, $iContactId, $sRawEmail) {
-    
-    // 1. Check it's turned on!
+  public function is_autocorrect_enabled(){
     if ( 'false' == CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled' ) ){
-      return;
+      return FALSE;
     }
+    return TRUE;
+  }
+  
+  public function check_for_corrections($iEmailId, $iContactId, $sRawEmail) {
     
-    // 2. Check that the email address has only one '@' - shouldn't need to do this but just in case.
+    // 1. Check that the email address has only one '@' - shouldn't need to do this but just in case.
     if (substr_count($sRawEmail, "@") != 1){
       return;
     }
 
-    // 3. Explode the string into the local part and the domain part.
+    // 2. Explode the string into the local part and the domain part.
     self::parse_email_byref($sRawEmail, $aEmailPieces, $aDomainPartPieces);
 
-    // 4. Load the settings and initialise.
-    $aTopLevelFilterSettings    = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections' );
-    $aSecondLevelFilterSettings = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections' );
-    $aCompoundTopLevelDomains   = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains' );
-    $iSecondLevelDomainFragmentIndex = self::get_second_domain_part_index($aEmailPieces[1], $aCompoundTopLevelDomains);
+    // 3. Load the settings and initialise.
+    $iSecondLevelDomainFragmentIndex = self::get_second_domain_part_index($aEmailPieces[1]);
 
-    // 5. Break it up and process it.
-    $bTopLevelChanged = self::perform_replacement( $aDomainPartPieces[0], $aTopLevelFilterSettings );
-    $bSecondLevelChanged = self::perform_replacement( $aDomainPartPieces[$iSecondLevelDomainFragmentIndex], $aSecondLevelFilterSettings);
+    // 4. Break it up and process it.
+    $bTopLevelChanged = self::perform_replacement( $aDomainPartPieces[0], $this->_aTopLevelFilterSettings );
+    $bSecondLevelChanged = self::perform_replacement( $aDomainPartPieces[$iSecondLevelDomainFragmentIndex], $this->_aSecondLevelFilterSettings);
 
-    // 6. Bail if nothing changed.
+    // 5. Bail if nothing changed.
     if ( !($bTopLevelChanged || $bSecondLevelChanged) ){
       return; 
     }
 
-    // 7. Recreate the fixed email address.
+    // 6. Recreate the fixed email address.
     $sCleanedEmail = self::reassemble_email($aEmailPieces, $aDomainPartPieces);
 
-    // 8. Update the email address.
+    // 7. Update the email address.
     $updateParam = array(
       "version" => 3,
       "id" => $iEmailId,
