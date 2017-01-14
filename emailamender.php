@@ -289,3 +289,35 @@ function emailamender_civicrm_navigationMenu( &$params ) {
     )
   );
 }
+
+/**
+ * Implements hook_civicrm_summaryActions().
+ *
+ * Adds an option to correct their Email Addresses according to the rules specified.
+ *
+ * @see CRM_Contact_BAO_Contact::contextMenu
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_tabs
+ */
+function emailamender_civicrm_summaryActions(&$actions, $contactID) {
+
+  $actions['emailamender'] = array(
+    'title'       => ts('Email - correct addresses'),
+    'weight'      => 0,
+    'ref'         => 'correct-addresses',
+    'key'         => 'com.civifirst.emailamender',
+    // cid=xxxx gets added to the action URL automatically
+    'href'        => CRM_Utils_System::url('civicrm/emailaddresscorrector/correct', array(
+      'reset'   => 1,
+      'action'  => 'add',
+      'context' => 'Emailamender',
+    )),
+    'permissions' => array('edit all contacts'),
+  );
+}
+
+/*function emailamender_civicrm_searchTasks($objectType, &$tasks ) {
+    if ( $objectType == 'contact' ) {
+ 
+      die(print_r($tasks, TRUE));
+    }
+}*/
