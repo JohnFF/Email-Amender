@@ -10,6 +10,8 @@ require_once 'CRM/Core/Form.php';
 class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_Task {
   function buildQuickForm() {
 
+    $this->assign('contactIdCount', count($this->_contactIds));
+    
     $this->addButtons(array(
       array(
         'type' => 'submit',
@@ -17,8 +19,6 @@ class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_
         'isDefault' => TRUE,
       ),
     ));
-
-    $this->assign('text', 'contents');
 
     // export form elements
     $this->assign('elementNames', $this->getRenderableElementNames());
@@ -28,7 +28,12 @@ class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_
   function postProcess() {
     $emailAmender = new CRM_Emailamender();
 
+    $contactCount = 0;
+    $correctionCount = 0;
+    
     foreach($this->_contactIds as $eachContactId) {
+      $contactCount++;
+      
       $updateParam = array(
         "version" => 3,
         "contact_id" => $eachContactId,
@@ -37,9 +42,13 @@ class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_
       $emailAddresses = civicrm_api('Email', 'get', $updateParam);
 
       foreach($emailAddresses['values'] as $eachEmailAddress) {
-        $emailAmender->check_for_corrections($eachEmailAddress['id'], $eachEmailAddress['contact_id'], $eachEmailAddress['email']);
+        if ($emailAmender->check_for_corrections($eachEmailAddress['id'], $eachEmailAddress['contact_id'], $eachEmailAddress['email'])) {
+          $correctionCount++;
+        }
       }
     }
+
+    CRM_Core_Session::setStatus(ts("Corrected $correctionCount email addresses across $contactCount contacts."));
 
     parent::postProcess();
   }

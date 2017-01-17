@@ -88,13 +88,13 @@ class CRM_Emailamender {
    * @param int $iEmailId
    * @param int $iContactId
    * @param string $sRawEmail
-   * @return none
+   * @return bool correction took place
    */
   public function check_for_corrections($iEmailId, $iContactId, $sRawEmail) {
     
     // 1. Check that the email address has only one '@' - shouldn't need to do this but just in case.
     if (substr_count($sRawEmail, "@") != 1){
-      return;
+      return FALSE;
     }
 
     // 2. Explode the string into the local part and the domain part.
@@ -109,7 +109,7 @@ class CRM_Emailamender {
 
     // 5. Bail if nothing changed.
     if ( !($bTopLevelChanged || $bSecondLevelChanged) ){
-      return; 
+      return FALSE; 
     }
 
     // 6. Recreate the fixed email address.
@@ -117,17 +117,26 @@ class CRM_Emailamender {
 
     // 7. Update the email address.
     $updateParam = array(
-      "version" => 3,
-      "id" => $iEmailId,
-      "email" => $sCleanedEmail
+      'version' => 3,
+      'id' => $iEmailId,
+      'email' => $sCleanedEmail,
+      // Take it off hold, taken from CRM_Core_BAO_Email.
+      'on_hold' => FALSE,
+      'hold_date' => NULL,
+      'reset_date' => date('YmdHis'),
     );
 
-    civicrm_api('Email', 'update', $updateParam);
+    $updateEmailOutput = civicrm_api('Email', 'update', $updateParam);
 
+    if ($updateEmailOutput['is_error']) {
+      CRM_Core_Session::setStatus(ts("Error when correcting email - contact ID $iContactId"), ts('Email Address Corrector'), 'error');
+      return FALSE;
+    }
+    
     // 8. Record the change by an activity.
     $iActivityTypeId = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amended_activity_type_id' );
 
-    civicrm_api('Activity', 'create', array (
+    $createActivityOutput = civicrm_api('Activity', 'create', array (
       'version' => '3', 
       'sequential' => '1', 
       'activity_type_id' => $iActivityTypeId, 
@@ -137,5 +146,12 @@ class CRM_Emailamender {
       'subject' => "Amended Email from $sRawEmail to $sCleanedEmail",
       'details' => "Amended Email from $sRawEmail to $sCleanedEmail",
     ));
+
+    if ($createActivityOutput['is_error']) {
+      CRM_Core_Session::setStatus(ts("Error when creating activity  - contact ID $iContactId"), ts('Email Address Corrector'), 'error');
+      return FALSE;
+    }
+
+    return TRUE;
   }
 }
