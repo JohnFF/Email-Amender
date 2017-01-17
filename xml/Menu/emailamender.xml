@@ -6,10 +6,4 @@
     <title>Settings</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
-  <item>
-    <path>civicrm/correctemailaddresses</path>
-    <page_callback>CRM_Emailamender_Form_Correctemailaddresses</page_callback>
-    <title>Correctemailaddresses</title>
-    <access_arguments>access CiviCRM</access_arguments>
-  </item>
 </menu>
