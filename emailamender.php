@@ -101,7 +101,7 @@ function emailamender_civicrm_install() {
   CRM_Core_BAO_Setting::setItem('false', 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled'); 
 
   // create activity types
-  emailamender_create_activity_type_if_doesnt_exist( 'Corrected Email', 'corrected_email', 'Automatically amended emails (by the Email Amender extension).', 'emailamender.email_amended_activity_type_id' );
+  emailamender_create_activity_type_if_doesnt_exist( 'Corrected Email Address', 'corrected_email_address', 'Automatically corrected emails (by the Email Address Corrector extension).', 'emailamender.email_amended_activity_type_id' );
 
   return _emailamender_civix_civicrm_install();
 }
