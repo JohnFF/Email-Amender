@@ -35,4 +35,4 @@ An activity of type "Amended Email" is recorded every time a correction is made,
 </div>
 <br/><br/>
 {include file="CRM/Emailamender/Page/EquivalentsTable.tpl" title='Equivalent Domains' data=$equivalent_domain_settings filter_id="equivalent_domain"}
-{include file="CRM/Emailamender/Page/EmailAmenderSettings.js"}
+{crmScript ext=uk.org.futurefirst.networks.emailamender file=templates/CRM/Emailamender/Page/EmailAmenderSettings.js}

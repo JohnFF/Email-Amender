@@ -1,5 +1,4 @@
-{literal}
-<script type="text/javascript" language="javascript">
+var CRM = CRM || {};
 
 function on_any_change( filter_id ){
 	jQuery('#'+filter_id).children('h3').css('background-color', '#98FB98');
@@ -74,7 +73,7 @@ function on_save(){
 		aInputValuesTo.push(jQuery(this).val());	
 	});
 
-	cj().crmAPI ('EmailAmender','update_corrections',{ 'sequential' :'1', 'domain_level' : filter_id, 'correction_keys' : aInputValuesFrom, 'correction_values' : aInputValuesTo}
+	CRM.api3 ('EmailAmender','update_corrections',{ 'sequential' :'1', 'domain_level' : filter_id, 'correction_keys' : aInputValuesFrom, 'correction_values' : aInputValuesTo}
   		,{ success:function (data){    
 		//  TODO indicate a successful save
       		// cj.each(data, function(key, value) {// do something });
@@ -89,7 +88,7 @@ function on_tld_save(){
 	jQuery('#compound_tld').find(':text').each(function (){
 		aInputValues.push(jQuery(this).val());
 	});
-	cj().crmAPI ('EmailAmender','update_compound_t_l_ds',{ 'sequential' :'1', 'compound_tlds' : aInputValues }
+	CRM.api3 ('EmailAmender','update_compound_t_l_ds',{ 'sequential' :'1', 'compound_tlds' : aInputValues }
   		,{ success:function (data){    
 		//  TODO indicate a successful save
       		// cj.each(data, function(key, value) {// do something });
@@ -174,7 +173,7 @@ jQuery('.add_new_compound_tld').click( function(){
 });
 
 jQuery('#email_amender_enabled').click( function (){ 
-	cj().crmAPI ('EmailAmender','update_settings',{ 'sequential' :'1', 'email_amender_enabled' : jQuery(this).is(':checked').toString() }
+	CRM.api3 ('EmailAmender','update_settings',{ 'sequential' :'1', 'email_amender_enabled' : jQuery(this).is(':checked').toString() }
   		,{ success:function (data){    
 
 		}
@@ -192,7 +191,3 @@ jQuery('h3').css('-moz-transition', 'background-color 0.4s linear');
 jQuery('h3').css('-ms-transition', 'background-color 0.4s linear');
 jQuery('h3').css('-o-transition', 'background-color 0.4s linear');
 jQuery('h3').css('transition', 'background-color 0.4s linear'); 
-
-</script>
-{/literal}
-

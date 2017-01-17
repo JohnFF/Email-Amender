@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <extension key="uk.org.futurefirst.networks.emailamender" type="module">
   <file>emailamender</file>
-  <name>Email Amender</name>
+  <name>Email Address Corrector</name>
   <description>Automatic correction of email addresses that are added to your database. i.e. john@hotmai.cpm is corrected to john@hotmail.com. 
-  You can add, remove, and edit the correction settings under the Administrator -> System Settings -> Email Amender menu. 
+  You can add, remove, and edit the correction settings under the Administrator -> System Settings -> Email Address Corrector menu. 
   Settings are added automatically upon install, and removed upon delete. 
   Existing email addresses aren't affected, and the corrections only take place upon edition, not editing. 
   Automatic correction has to be enabled after install.
@@ -11,16 +11,14 @@
   </description>
   <license>AGPL 3.0</license>
   <maintainer>
-    <author>John E Prescott</author>
-    <email>john@futurefirst.org.uk</email>
+    <author>John P Kirk</author>
+    <email>john@civifirst.com</email>
   </maintainer>
-  <releaseDate>2014-06-26</releaseDate>
-  <version>1.2</version>
+  <releaseDate>2016-11-20</releaseDate>
+  <version>2.0</version>
   <develStage>stable</develStage>
   <compatibility>
-    <ver>4.2</ver>
-    <ver>4.3</ver>
-    <ver>4.4</ver>
+    <ver>4.7</ver>
   </compatibility>
   <comments>The email addresses were selected based on Future First's experience of common email errors.</comments>
   <civix>

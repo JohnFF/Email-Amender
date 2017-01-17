@@ -9,7 +9,7 @@
  * @see http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
  */
 function _civicrm_api3_email_amender_update_compound_t_l_ds_spec(&$spec) {
-  //$spec['magicword']['api.required'] = 1;
+  $spec['compound_tlds']['api.required'] = 1;
 }
 
 /**
@@ -23,15 +23,14 @@ function _civicrm_api3_email_amender_update_compound_t_l_ds_spec(&$spec) {
  */
 function civicrm_api3_email_amender_update_compound_t_l_ds($params) { 
 
-  $aEscapedCompoundTLDs = array();
-  $sCivicrmSettingsKey = "";
+  $aEscapedCorrections = array();
 
   foreach( $params['compound_tlds'] as $compoundTLDs ){
-    $aEscapedCorrections[] = mysql_real_escape_string($compoundTLDs);
+    $aEscapedCorrections[] = CRM_Core_DAO::escapeString($compoundTLDs);
   }
 
-  CRM_Core_BAO_Setting::setItem($aEscapedCorrections, 'uk.org.futurefirst.networks.emailamender', 'compound_top_level_domains');
+  CRM_Core_BAO_Setting::setItem($aEscapedCorrections, 'uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains');
 
-  return civicrm_api3_create_success($returnValues, $params, 'EmailAmenderCompoundTLDs', 'Update');
+  return civicrm_api3_create_success(array(), $params, 'EmailAmenderCompoundTLDs', 'Update');
 }
 

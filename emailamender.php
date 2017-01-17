@@ -23,7 +23,7 @@ function emailamender_civicrm_xmlMenu(&$files) {
  * also updates the civicrm_setting entry
  * 
  */	
-function emailamender_create_activity_type_if_doesnt_exist( $sActivityTypeLabel, $sActivityTypeDescription, $sSettingName ){
+function emailamender_create_activity_type_if_doesnt_exist( $sActivityTypeLabel, $sActivityTypeName, $sActivityTypeDescription, $sSettingName ){
 
   $aActivityTypeCheck=civicrm_api("OptionValue","get", array ('version' => '3','sequential' =>'1', 'name' => $sActivityTypeLabel));
 
@@ -46,6 +46,7 @@ function emailamender_create_activity_type_if_doesnt_exist( $sActivityTypeLabel,
       'sequential'   => '1', 
       'is_active'    => '1',
       'label'        => $sActivityTypeLabel, 
+      'name'         => $sActivityTypeName,
       'weight'       => '1', 
       'description'  => $sActivityTypeDescription,
     )
@@ -93,14 +94,14 @@ function emailamender_civicrm_install() {
     'googlemail.co.uk' => 'GMail UK',
   );
 
-  CRM_Core_BAO_Setting::setItem($aTopLevelDomainCorrections, 'uk.org.futurefirst.networks.emailamender', 'top_level_domain_corrections');
-  CRM_Core_BAO_Setting::setItem($aSecondLevelDomainCorrections, 'uk.org.futurefirst.networks.emailamender', 'second_level_domain_corrections');
-  CRM_Core_BAO_Setting::setItem($aCompoundTopLevelDomains, 'uk.org.futurefirst.networks.emailamender', 'compound_top_level_domains');
-  CRM_Core_BAO_Setting::setItem($aDomainEquivalents, 'uk.org.futurefirst.networks.emailamender', 'equivalent_domains');
-  CRM_Core_BAO_Setting::setItem('false', 'uk.org.futurefirst.networks.emailamender', 'email_amender_enabled'); 
+  CRM_Core_BAO_Setting::setItem($aTopLevelDomainCorrections, 'uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections');
+  CRM_Core_BAO_Setting::setItem($aSecondLevelDomainCorrections, 'uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections');
+  CRM_Core_BAO_Setting::setItem($aCompoundTopLevelDomains, 'uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains');
+  CRM_Core_BAO_Setting::setItem($aDomainEquivalents, 'uk.org.futurefirst.networks.emailamender', 'emailamender.equivalent_domains');
+  CRM_Core_BAO_Setting::setItem('false', 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled'); 
 
   // create activity types
-  emailamender_create_activity_type_if_doesnt_exist( 'Amended Email', 'Automatically amended emails (by the Email Amender extension).', 'email_amended_activity_type_id' );
+  emailamender_create_activity_type_if_doesnt_exist( 'Corrected Email', 'corrected_email', 'Automatically amended emails (by the Email Amender extension).', 'emailamender.email_amended_activity_type_id' );
 
   return _emailamender_civix_civicrm_install();
 }
@@ -110,7 +111,7 @@ function emailamender_civicrm_install() {
  */
 function emailamender_civicrm_uninstall() {
 
-  $dao = CRM_Core_DAO::executeQuery("DELETE FROM civicrm_setting WHERE group_name = 'uk.org.futurefirst.networks.emailamender'");
+  CRM_Core_DAO::executeQuery("DELETE FROM civicrm_setting WHERE name LIKE 'emailamender%'");
 
   return _emailamender_civix_civicrm_uninstall();
 }
@@ -153,60 +154,6 @@ function emailamender_civicrm_managed(&$entities) {
 }
 
 /**
- * Do the main processing of the domain part of the email address
- *
- * 
- */
-function emailamender_performreplacement( &$sDomainFragment, &$aCorrections ){
-  if (array_key_exists($sDomainFragment, $aCorrections)){
-    $sDomainFragment = $aCorrections[$sDomainFragment];
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-/**
- *  For instances like john@gmai.co.uk where the last two parts are treated like one part of the URL. 
- *  We want to correct gmai not co 
- *
- */
-function emailamender_get_second_domain_part_index( $sDomainPart, &$aCompoundTopLevelDomains ){
-  foreach ($aCompoundTopLevelDomains as $sCompoundTld){
-    if (substr( $sDomainPart, -strlen($sCompoundTld) ) == $sCompoundTld){
-      RETURN 2;
-    }
-  }
-
-  RETURN 1;
-}
-
-/**
- * Parse a raw email address
- * Sets variables by reference with the pieces.
- */
-function emailamender_parse_email_byref($sRawEmail, &$aEmailPieces, &$aDomainPartPieces) {
-  // Explode the string into the local part and the domain part
-  $aEmailPieces = explode('@', $sRawEmail);
-
-  // Break up the domain part
-  // - this is done in reverse order to make processing far easier than 
-  // - attempting to ignore subdomains in an instance like gmai.hotmai.ibm.com
-  $aDomainPartPieces = explode('.', $aEmailPieces[1]);
-  $aDomainPartPieces = array_reverse( $aDomainPartPieces );
-}
-
-/**
- * Reassembles an email address from the pieces
- */
-function emailamender_reassemble_email($aEmailPieces, $aDomainPartPieces) {
-  $aDomainPartPieces = array_reverse( $aDomainPartPieces );
-  $aEmailPieces[1] = implode('.', $aDomainPartPieces);
-  $sCleanedEmail = mysql_real_escape_string(implode('@', $aEmailPieces));
-  return $sCleanedEmail;
-}
-
-/**
  * Implementation of hook_civicrm_post( $op, $objectName, $id, &$params )
  *
  * Amends the emails after creation according to the stored amender settings. 
@@ -222,64 +169,10 @@ function emailamender_civicrm_post( $op, $objectName, $id, &$params ){
     return;
   }
 
-  // 2. check that email amending is enabled. If it's not, bail
-  if ( 'false' == CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'email_amender_enabled' ) ){
-  	return;
+  $emailAmender = new CRM_Emailamender();
+  if ($emailAmender->is_autocorrect_enabled()) {
+    $emailAmender->check_for_corrections($params->id, $params->contact_id, $params->email);
   }
-
-  // 3. init vars
-  $iEmailId    = $params->id;
-  $iContactId  = $params->contact_id;
-  $sRawEmail   = $params->email;
-
-  // 4. check that it has only one '@' - shouldn't need to do this but just in case
-  if (substr_count($sRawEmail, "@") != 1){
-    return;
-  }
- 
-  // 5. explode the string into the local part and the domain part
-  emailamender_parse_email_byref($sRawEmail, $aEmailPieces, $aDomainPartPieces);
-
-  // 6. load settings and init
-  $aTopLevelFilterSettings    = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'top_level_domain_corrections' );
-  $aSecondLevelFilterSettings = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'second_level_domain_corrections' );
-  $aCompoundTopLevelDomains   = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'compound_top_level_domains' );
-  $iSecondLevelDomainFragmentIndex = emailamender_get_second_domain_part_index($aEmailPieces[1], $aCompoundTopLevelDomains);
-
-  // 7. break it up and process it
-  $bTopLevelChanged = emailamender_performreplacement( $aDomainPartPieces[0], $aTopLevelFilterSettings );
-  $bSecondLevelChanged = emailamender_performreplacement( $aDomainPartPieces[$iSecondLevelDomainFragmentIndex], $aSecondLevelFilterSettings);
-
-  // 8. bail if nothing changed
-  if ( !($bTopLevelChanged || $bSecondLevelChanged) ){
-    return; 
-  }
-
-  // 9. recreate the fixed email address
-  $sCleanedEmail = emailamender_reassemble_email($aEmailPieces, $aDomainPartPieces);
-
-  // 10. update the email address
-  $updateParam = array(
-    "version" => 3,
-    "id" => $iEmailId,
-    "email" => $sCleanedEmail
-  );
-  
-  civicrm_api("Email", "update", $updateParam);
-
-  // 11. record everything
-  $iActivityTypeId = CRM_Core_BAO_Setting::getItem( 'uk.org.futurefirst.networks.emailamender', 'email_amended_activity_type_id' );
-  $results=civicrm_api("Activity", "create", array (
-    'version' => '3', 
-    'sequential' => '1', 
-    'activity_type_id' => $iActivityTypeId, 
-    'source_contact_id' => $iContactId, 
-    'source_record_id' => $iContactId, 
-    'target_contact_id' => $iContactId, 
-    'assignee_contact_id' => $iContactId,
-    'subject' => "Amended Email from $sRawEmail to $sCleanedEmail",
-    'details' => "Amended Email from $sRawEmail to $sCleanedEmail",
-  ));
 }
 
 /**
@@ -349,7 +242,7 @@ function emailamender_civicrm_emailProcessorContact($email, $contactID, &$result
   $aEmailParts = explode('@', $email);
 
   // load settings and init
-  $aDomainEquivalents = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'equivalent_domains');
+  $aDomainEquivalents = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.equivalent_domains');
 
   // Try equivalent e-mail domains, if there are any
   $aEquivalentsToTry = emailamender_getequivalentsfor($aEmailParts[1], $aDomainEquivalents);
@@ -387,7 +280,7 @@ function emailamender_civicrm_navigationMenu( &$params ) {
 	
   $params[$sAdministerMenuId]['child'][$sSystemSettingsMenuId]['child'][$maxKey +1] = array (
     'attributes' => array (
-       'label'      => 'Email Amender Settings',
+       'label'      => 'Email Address Corrector Settings',
        'name'       => 'EmailAmenderSettings',
        'url'        => 'civicrm/emailamendersettings',
        'permission' => null,
@@ -398,4 +291,15 @@ function emailamender_civicrm_navigationMenu( &$params ) {
        'active'     => 1
     )
   );
+}
+
+function emailamender_civicrm_searchTasks($objectType, &$tasks )
+{
+    if ($objectType=='contact')
+    {
+        $tasks[] = array(
+            'title'  => ts('Email - correct email addresses'),
+            'class'  => 'CRM_Emailamender_Form_Task_Correctemailaddresses',
+            'result' => true );
+    }
 }
