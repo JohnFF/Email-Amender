@@ -68,7 +68,7 @@ class CRM_Emailamender_IntegrationTest extends \PHPUnit_Framework_TestCase imple
       'version' => 3,
       'sequential' => 1,
       'contact_id' => $contactId,
-      'activity_type_id' => 'corrected_email',
+      'activity_type_id' => 'corrected_email_address',
     ));
   }
 
