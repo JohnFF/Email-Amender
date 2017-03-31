@@ -3,60 +3,56 @@
 require_once 'emailamender.civix.php';
 
 /**
- * Implementation of hook_civicrm_config
+ * Implements hook_civicrm_config().
  */
 function emailamender_civicrm_config(&$config) {
   _emailamender_civix_civicrm_config($config);
 }
 
 /**
- * Implementation of hook_civicrm_xmlMenu
- *
- * @param $files array(string)
+ * Implements hook_civicrm_xmlMenu().
  */
 function emailamender_civicrm_xmlMenu(&$files) {
   _emailamender_civix_civicrm_xmlMenu($files);
 }
 
-/*
+/**
  * create_activity_type_if_doesnt_exist
  * also updates the civicrm_setting entry
- * 
- */	
-function emailamender_create_activity_type_if_doesnt_exist( $sActivityTypeLabel, $sActivityTypeName, $sActivityTypeDescription, $sSettingName ){
+ *
+ */
+function emailamender_create_activity_type_if_doesnt_exist($sActivityTypeLabel, $sActivityTypeName, $sActivityTypeDescription, $sSettingName) {
 
-  $aActivityTypeCheck=civicrm_api("OptionValue","get", array ('version' => '3','sequential' =>'1', 'name' => $sActivityTypeLabel));
+  $aActivityTypeCheck = civicrm_api("OptionValue", "get", array('version' => '3', 'sequential' => '1', 'name' => $sActivityTypeLabel));
 
-  if ($aActivityTypeCheck['count'] > 0){
-  	print_r($aActivityTypeCheck, TRUE);
+  if ($aActivityTypeCheck['count'] > 0) {
+    print_r($aActivityTypeCheck, TRUE);
     CRM_Core_BAO_Setting::setItem(
-      $aActivityTypeCheck['values'][0]['value'], 
-      'uk.org.futurefirst.networks.emailamender', 
+      $aActivityTypeCheck['values'][0]['value'],
+      'uk.org.futurefirst.networks.emailamender',
       $sSettingName
-	  ); 	
-	
-  	return;
+    );
+
+    return;
   }
 
   // create activity types
-  $aEmailAmendedCreateResults = civicrm_api(
-    "ActivityType",
-    "create",
-    array ('version' => '3',
-      'sequential'   => '1', 
+  $aEmailAmendedCreateResults = civicrm_api('ActivityType', 'create', array(
+      'version' => '3',
+      'sequential'   => '1',
       'is_active'    => '1',
-      'label'        => $sActivityTypeLabel, 
+      'label'        => $sActivityTypeLabel,
       'name'         => $sActivityTypeName,
-      'weight'       => '1', 
+      'weight'       => '1',
       'description'  => $sActivityTypeDescription,
     )
   );
 
-  CRM_Core_BAO_Setting::setItem($aEmailAmendedCreateResults['values'][0]['value'], 'uk.org.futurefirst.networks.emailamender', $sSettingName); 	
+  CRM_Core_BAO_Setting::setItem($aEmailAmendedCreateResults['values'][0]['value'], 'uk.org.futurefirst.networks.emailamender', $sSettingName);
 }
 
 /**
- * Implementation of hook_civicrm_install
+ * Implements hook_civicrm_install().
  */
 function emailamender_civicrm_install() {
 
@@ -98,16 +94,16 @@ function emailamender_civicrm_install() {
   CRM_Core_BAO_Setting::setItem($aSecondLevelDomainCorrections, 'uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections');
   CRM_Core_BAO_Setting::setItem($aCompoundTopLevelDomains, 'uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains');
   CRM_Core_BAO_Setting::setItem($aDomainEquivalents, 'uk.org.futurefirst.networks.emailamender', 'emailamender.equivalent_domains');
-  CRM_Core_BAO_Setting::setItem('false', 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled'); 
+  CRM_Core_BAO_Setting::setItem('false', 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled');
 
   // create activity types
-  emailamender_create_activity_type_if_doesnt_exist( 'Corrected Email Address', 'corrected_email_address', 'Automatically corrected emails (by the Email Address Corrector extension).', 'emailamender.email_amended_activity_type_id' );
+  emailamender_create_activity_type_if_doesnt_exist('Corrected Email Address', 'corrected_email_address', 'Automatically corrected emails (by the Email Address Corrector extension).', 'emailamender.email_amended_activity_type_id');
 
   return _emailamender_civix_civicrm_install();
 }
 
 /**
- * Implementation of hook_civicrm_uninstall
+ * Implements hook_civicrm_uninstall().
  */
 function emailamender_civicrm_uninstall() {
 
@@ -117,34 +113,28 @@ function emailamender_civicrm_uninstall() {
 }
 
 /**
- * Implementation of hook_civicrm_enable
+ * Implements hook_civicrm_enable().
  */
 function emailamender_civicrm_enable() {
   return _emailamender_civix_civicrm_enable();
 }
 
 /**
- * Implementation of hook_civicrm_disable
+ * Implements hook_civicrm_disable().
  */
 function emailamender_civicrm_disable() {
   return _emailamender_civix_civicrm_disable();
 }
 
 /**
- * Implementation of hook_civicrm_upgrade
- *
- * @param $op string, the type of operation being performed; 'check' or 'enqueue'
- * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of pending up upgrade tasks
- *
- * @return mixed  based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
- *                for 'enqueue', returns void
+ * Implements hook_civicrm_upgrade().
  */
 function emailamender_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
   return _emailamender_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
- * Implementation of hook_civicrm_managed
+ * Implements hook_civicrm_managed().
  *
  * Generate a list of entities to create/deactivate/delete when this module
  * is installed, disabled, uninstalled.
@@ -154,18 +144,17 @@ function emailamender_civicrm_managed(&$entities) {
 }
 
 /**
- * Implementation of hook_civicrm_post( $op, $objectName, $id, &$params )
+ * Implements hook_civicrm_post().
  *
- * Amends the emails after creation according to the stored amender settings. 
+ * Amends the emails after creation according to the stored amender settings.
  */
-function emailamender_civicrm_post( $op, $objectName, $id, &$params ){
-  
+function emailamender_civicrm_post($op, $objectName, $id, &$params) {
   // 1. ignore all operations other than adding an email address
-  if ($objectName != "Email"){
+  if ($objectName != "Email") {
     return;
   }
 
-  if ($op != "create"){
+  if ($op != "create") {
     return;
   }
 
@@ -179,9 +168,9 @@ function emailamender_civicrm_post( $op, $objectName, $id, &$params ){
  * From the list of equivalent domain fragments, get the ones that
  * may apply to the address we've received.
  *
- * @param  string $sDomainPart        The domain for which we want equivalents
- * @param  array  $aDomainEquivalents Array mapping possible equivalents to groups
- * @return array  Possible equivalents for the supplied domain
+ * @param string $sDomainPart        The domain for which we want equivalents
+ * @param array $aDomainEquivalents Array mapping possible equivalents to groups
+ * @return array Possible equivalents for the supplied domain
  */
 function emailamender_getequivalentsfor($sDomainPart, $aDomainEquivalents) {
   // Is the supplied domain listed as one that may have equivalents?
@@ -215,20 +204,11 @@ function emailamender_try_equivalent($sEmailToTry) {
 }
 
 /**
- * Implementation of hook_civicrm_emailProcessorContact( $email, $contactID, &$result )
+ * Implements hook_civicrm_emailProcessorContact().
  *
  * If the contact ID passed in is null and the e-mail address isn't,
  * try looking up equivalent email addresses to see if a contact
  * already exists with an equivalent of the supplied address.
- *
- * @param string $email     the email address
- * @param int    $contactID the contactID that matches this email address, IF it exists
- * @param array  $result    (reference) has two fields
- *                 contactID - the new (or same) contactID
- *                 action    - 3 possible values:
- *                   CRM_Utils_Mail_Incoming::EMAILPROCESSOR_CREATE_INDIVIDUAL - create a new contact record
- *                   CRM_Utils_Mail_Incoming::EMAILPROCESSOR_OVERRIDE          - use the new contactID
- *                   CRM_Utils_Mail_Incoming::EMAILPROCESSOR_IGNORE            - skip this email address
  */
 function emailamender_civicrm_emailProcessorContact($email, $contactID, &$result) {
   // Check for already valid contact ID
@@ -267,39 +247,41 @@ function emailamender_civicrm_emailProcessorContact($email, $contactID, &$result
 
 /**
  * civicrm_civicrm_navigationMenu
- * 
+ *
  * implementation of civicrm_civicrm_navigationMenu
- * 
+ *
  */
-function emailamender_civicrm_navigationMenu( &$params ) {
+function emailamender_civicrm_navigationMenu(&$params) {
   $sAdministerMenuId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'Administer', 'id', 'name');
   $sSystemSettingsMenuId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'System Settings', 'id', 'name');
-    
+
   //  Get the maximum key of $params
-  $maxKey = ( max( array_keys($params) ) );	
-	
-  $params[$sAdministerMenuId]['child'][$sSystemSettingsMenuId]['child'][$maxKey +1] = array (
-    'attributes' => array (
-       'label'      => 'Email Address Corrector Settings',
-       'name'       => 'EmailAmenderSettings',
-       'url'        => 'civicrm/emailamendersettings',
-       'permission' => null,
-       'operator'   => null,
-       'separator'  => null,
-       'parentID'   => $sSystemSettingsMenuId,
-       'navID'      => $maxKey +1,
-       'active'     => 1
-    )
+  $maxKey = max(array_keys($params));
+
+  $params[$sAdministerMenuId]['child'][$sSystemSettingsMenuId]['child'][$maxKey + 1] = array(
+    'attributes' => array(
+      'label'      => 'Email Address Corrector Settings',
+      'name'       => 'EmailAmenderSettings',
+      'url'        => 'civicrm/emailamendersettings',
+      'permission' => NULL,
+      'operator'   => NULL,
+      'separator'  => NULL,
+      'parentID'   => $sSystemSettingsMenuId,
+      'navID'      => $maxKey + 1,
+      'active'     => 1,
+    ),
   );
 }
 
-function emailamender_civicrm_searchTasks($objectType, &$tasks )
-{
-    if ($objectType=='contact')
-    {
-        $tasks[] = array(
-            'title'  => ts('Email - correct email addresses'),
-            'class'  => 'CRM_Emailamender_Form_Task_Correctemailaddresses',
-            'result' => true );
-    }
+/**
+ * Implements hook_civicrm_searchTasks().
+ */
+function emailamender_civicrm_searchTasks($objectType, &$tasks) {
+  if ($objectType == 'contact') {
+    $tasks[] = array(
+      'title'  => ts('Email - correct email addresses'),
+      'class'  => 'CRM_Emailamender_Form_Task_Correctemailaddresses',
+      'result' => TRUE,
+    );
+  }
 }
