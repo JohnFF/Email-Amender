@@ -8,10 +8,10 @@ require_once 'CRM/Core/Form.php';
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC43/QuickForm+Reference
  */
 class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_Task {
-  function buildQuickForm() {
+  public function buildQuickForm() {
 
     $this->assign('contactIdCount', count($this->_contactIds));
-    
+
     $this->addButtons(array(
       array(
         'type' => 'submit',
@@ -25,15 +25,15 @@ class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_
     parent::buildQuickForm();
   }
 
-  function postProcess() {
+  public function postProcess() {
     $emailAmender = new CRM_Emailamender();
 
     $contactCount = 0;
     $correctionCount = 0;
-    
-    foreach($this->_contactIds as $eachContactId) {
+
+    foreach ($this->_contactIds as $eachContactId) {
       $contactCount++;
-      
+
       $updateParam = array(
         "version" => 3,
         "contact_id" => $eachContactId,
@@ -41,7 +41,7 @@ class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_
 
       $emailAddresses = civicrm_api('Email', 'get', $updateParam);
 
-      foreach($emailAddresses['values'] as $eachEmailAddress) {
+      foreach ($emailAddresses['values'] as $eachEmailAddress) {
         if ($emailAmender->check_for_corrections($eachEmailAddress['id'], $eachEmailAddress['contact_id'], $eachEmailAddress['email'])) {
           $correctionCount++;
         }
@@ -58,7 +58,7 @@ class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_
    *
    * @return array (string)
    */
-  function getRenderableElementNames() {
+  public function getRenderableElementNames() {
     // The _elements list includes some items which should not be
     // auto-rendered in the loop -- such as "qfKey" and "buttons".  These
     // items don't have labels.  We'll identify renderable by filtering on
@@ -73,4 +73,5 @@ class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_
     }
     return $elementNames;
   }
+
 }
