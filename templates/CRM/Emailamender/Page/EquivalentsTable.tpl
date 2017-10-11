@@ -1,7 +1,7 @@
 <div id="{$filter_id}">
-<h3>{$title}</h3>
+<h3>{ts}{$title}{/ts}</h3>
 <p>
-  When an e-mail arrives from an address for which there is no existing
+  {ts}When an e-mail arrives from an address for which there is no existing
   contact in the system, normally a new contact is created with that
   address.
   <br/><br/>
@@ -18,12 +18,12 @@
   addresses, it is not subject to the box 'Enable automatic email
   corrections' being ticked.
   <br/><br/>
-  It does not change any existing data for a contact.
+  It does not change any existing data for a contact.{/ts}
 </p>
 <table id="{$filter_id}_table">
-        <th>Group identifier</th>
-        <th>Equivalent domain</th>
-        <th>Options</th>
+        <th>{ts}Group identifier{/ts}</th>
+        <th>{ts}Equivalent domain{/ts}</th>
+        <th>{ts}Options{/ts}</th>
 {foreach from=$data key=find item=replaceWith}
 <tr>
         <td style="max-width: 43% !important; min-width: 43% !important; width: 43% !important;">    
@@ -41,5 +41,5 @@
 {/foreach}
 </table>
 <input class="add_new_equivalent" type="button" value="Add new equivalent" filter_id="{$filter_id}"></input>
-<input class="save_correction_changes save_changes_button" type="button" value="Save changes" style="display: none" filter_id="{$filter_id}"></input>
+<input class="save_correction_changes save_changes_button" type="button" value="{ts}Save changes{/ts}" style="display: none" filter_id="{$filter_id}"></input>
 </div>

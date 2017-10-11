@@ -1,6 +1,6 @@
-<p>When the Enable Automatic Email Corrections setting below is checked, email addresses are corrected automatically as they are added. So <strong>john@hotmai.cpm</strong> would be corrected to <strong>john@hotmail.com</strong></p><br/>
+<p>{ts}When the Enable Automatic Email Corrections setting below is checked, email addresses are corrected automatically as they are added. So <strong>john@hotmai.cpm</strong> would be corrected to <strong>john@hotmail.com</strong>{/ts}</p><br/>
 <div style="text-align: center; width: 100%">
-<input style="margin: auto;" type="checkbox" id="email_amender_enabled" {if $email_amender_enabled eq "true"} checked="checked" {/if}>Enable automatic email corrections.
+<input style="margin: auto;" type="checkbox" id="email_amender_enabled" {if $email_amender_enabled eq "true"} checked="checked" {/if}>{ts}Enable automatic email corrections.{/ts}
 </div>
 <br/>
 <p>The Email Amender has been designed not to affect edits made to any email addresses, or to change any email addresses that are already in your system. It will only act when new email addresses are added.<br/><br/>
@@ -18,15 +18,15 @@ An activity of type "Amended Email" is recorded every time a correction is made,
 {include file="CRM/Emailamender/Page/EmailAmenderSettingsTable.tpl" title='Second Level Domain Settings' data=$second_level_filter_settings filter_id="second_level_domain"}
 <br/><br/>
 <div id="compound_tld">
-<h3>Compound Top Level Domain Names</h3>
-"Compound" Top Level Domain Names indicate second level domain names that are usually treated as part of the first. For instance, in the case of the incorrect email address john@gmai.co.uk, we want to repair the 'gmai', not the 'co'. 
+<h3>{ts}Compound Top Level Domain Names{/ts}</h3>
+{ts}"Compound" Top Level Domain Names indicate second level domain names that are usually treated as part of the first. For instance, in the case of the incorrect email address john@gmai.co.uk, we want to repair the 'gmai', not the 'co'.{/ts} 
 <table id="compound_tld_table">
 	<th>Compound Domain Name</th>
 	<th>Options</th>
 	{foreach from=$compound_top_level_domains item=compoundTld}
 		<tr>
 			<td><input type="text" value="{$compoundTld}" filter_id="compound_tld"></input></td>
-			<td><a href="#" class="deleteButton" filter_id="compound_tld">Delete this compound tld</a></td>
+			<td><a href="#" class="deleteButton" filter_id="compound_tld">{ts}Delete this compound tld{/ts}</a></td>
 		</tr>
 	{/foreach}
 </table>

@@ -1,9 +1,9 @@
 <div id="{$filter_id}">
-<h3>{$title}</h3>
+<h3>{ts}{$title}{/ts}</h3>
 <table id="{$filter_id}_table">
-        <th>Incorrect Domain</th>
-        <th>Replace with</th>
-        <th>Options</th>
+        <th>{ts}Incorrect Domain{/ts}</th>
+        <th>{ts}Replace with{/ts}</th>
+        <th>{ts}Options{/ts}</th>
 {foreach from=$data key=find item=replaceWith}
 <tr>
         <td style="max-width: 43% !important; min-width: 43% !important; width: 43% !important;">    
@@ -21,5 +21,5 @@
 {/foreach}
 </table>
 <input class="add_new_correction" type="button" value="Add new correction" filter_id="{$filter_id}"></input>
-<input class="save_correction_changes save_changes_button" type="button" value="Save changes" style="display: none" filter_id="{$filter_id}"></input>
+<input class="save_correction_changes save_changes_button" type="button" value="{ts}Save changes{/ts}" style="display: none" filter_id="{$filter_id}"></input>
 </div>
