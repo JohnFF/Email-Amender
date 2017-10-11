@@ -7,7 +7,7 @@
     You can add, remove, and edit the correction settings under the Administrator -> System Settings -> Email Address Corrector menu.
     Automatic email address correction is enabled or disabled at Administrator -> System Settings -> Email Address Corrector menu. It is disabled by default.
     Existing email addresses aren't affected automatically, and the corrections only take place when they are added, not edited.
-    You can correct email addresses that are already in your CRM by using the new search result action "Email - address correction".
+    You can correct email addresses that are already in your CRM by using the new search result action "Email - correct email addresses".
     You can also add email domain equivalents to the tool. We found that some contacts were being created when we had an @gmail.co.uk address registered for them, but there was an inbound email from @googlemail.co.uk. This will help prevent duplicate contacts.
   </description>
   <license>AGPL 3.0</license>
@@ -16,7 +16,7 @@
     <email>john@civifirst.com</email>
   </maintainer>
   <releaseDate>2016-11-20</releaseDate>
-  <version>2.0</version>
+  <version>2.01</version>
   <develStage>stable</develStage>
   <compatibility>
     <ver>4.7</ver>
