@@ -5,11 +5,13 @@ class CRM_Emailamender {
   private $_aTopLevelFilterSettings;
   private $_aSecondLevelFilterSettings;
   private $_aCompoundTopLevelDomains;
+  private $_iCorrectedEmailAddressActivityTypeId;
 
   public function __construct() {
     $this->_aTopLevelFilterSettings = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections');
     $this->_aSecondLevelFilterSettings = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections');
     $this->_aCompoundTopLevelDomains = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains');
+    $this->iCorrectedEmailAddressActivityTypeId = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.email_amended_activity_type_id');
   }
 
   /**
@@ -134,12 +136,10 @@ class CRM_Emailamender {
     }
 
     // 8. Record the change by an activity.
-    $iActivityTypeId = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.email_amended_activity_type_id');
-
     $createActivityOutput = civicrm_api('Activity', 'create', array(
       'version' => '3',
       'sequential' => '1',
-      'activity_type_id' => $iActivityTypeId,
+      'activity_type_id' => $this->iCorrectedEmailAddressActivityTypeId,
       'source_contact_id' => $iContactId,
       'target_contact_id' => $iContactId,
       'assignee_contact_id' => $iContactId,
