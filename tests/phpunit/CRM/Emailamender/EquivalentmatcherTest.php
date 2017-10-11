@@ -44,7 +44,6 @@ class CRM_Emailamender_EquivalentmatcherTest extends \PHPUnit_Framework_TestCase
     
     // Test contact with gmail address receiving a googlemail email.
     $gmailContactDetails = civicrm_api3('contact', 'create', array('contact_type' => 'Individual', 'email' => 'gmailtest@gmail.com'));
-
     $gmailContactResult = NULL;
     CRM_Emailamender_Equivalentmatcher::processHook('gmailtest@googlemail.com', NULL, $gmailContactResult);
     $this->assertEquals($gmailContactDetails['id'], $gmailContactResult['contactID']);
@@ -52,7 +51,6 @@ class CRM_Emailamender_EquivalentmatcherTest extends \PHPUnit_Framework_TestCase
 
     // Test contact with googlemail address receiving a gmail email.
     $googlemailContactDetails = civicrm_api3('contact', 'create', array('contact_type' => 'Individual', 'email' => 'googlemailtest@googlemail.com'));
-
     $googlemailResult = NULL;
     CRM_Emailamender_Equivalentmatcher::processHook('googlemailtest@gmail.com', NULL, $googlemailResult);
     $this->assertEquals($googlemailContactDetails['id'], $googlemailResult['contactID']);
@@ -64,10 +62,15 @@ class CRM_Emailamender_EquivalentmatcherTest extends \PHPUnit_Framework_TestCase
     CRM_Emailamender_Equivalentmatcher::processHook('present@gmail.com', $presentContactDetails['id'], $presentResult);
     $this->assertNull($presentResult); // Want normal process, not overridden.
 
-    // Test that the result is null if there's a non-equivalent email.
-    $nonequivalentResult = NULL;
-    CRM_Emailamender_Equivalentmatcher::processHook('uniqueemail@test.test', NULL, $nonequivalentResult);
-    $this->assertNull($nonequivalentResult);
+    // Test that the result is null if there's a non-equivalent email and an unknown domain.
+    $nonequivalentUnknownDomainResult = NULL;
+    CRM_Emailamender_Equivalentmatcher::processHook('uniqueemail@test.test', NULL, $nonequivalentUnknownDomainResult);
+    $this->assertNull($nonequivalentUnknownDomainResult);
+
+    // Test that the result is null if there's a non-equivalent email and a known domain.
+    $nonequivalentKnownDomainResult = NULL;
+    CRM_Emailamender_Equivalentmatcher::processHook('uniqueemail@gmail.com', NULL, $nonequivalentKnownDomainResult);
+    $this->assertNull($nonequivalentKnownDomainResult);
   }
 
 }
