@@ -15,7 +15,7 @@ class CRM_Emailamender_Equivalentmatcher {
    * @param array $aDomainEquivalents Array mapping possible equivalents to groups
    * @return array Possible equivalents for the supplied domain
    */
-  private static function getEquivalentsFor($sDomainPart, $aDomainEquivalents) {
+  private static function getEquivalentDomainsFor($sDomainPart, $aDomainEquivalents) {
     // Is the supplied domain listed as one that may have equivalents?
     if (!array_key_exists($sDomainPart, $aDomainEquivalents)) {
       return NULL;
@@ -35,7 +35,7 @@ class CRM_Emailamender_Equivalentmatcher {
    * @param  string $sEmailToTry A complete e-mail address to look up contacts for.
    * @return int    The contact ID with that address if one exists, else NULL.
    */
-  private static function tryEquivalent($sEmailToTry) {
+  private static function tryEquivalentDomain($sEmailToTry) {
     // This is copied from what CRM_Utils_Mail_Incoming::getContactID
     // does before calling the hook emailProcessorContact.
     $dao = CRM_Contact_BAO_Contact::matchContactOnEmail($sEmailToTry, 'Individual');
@@ -50,6 +50,9 @@ class CRM_Emailamender_Equivalentmatcher {
    * If the contact ID passed in is null and the e-mail address isn't,
    * try looking up equivalent email addresses to see if a contact
    * already exists with an equivalent of the supplied address.
+   *
+   * Note that a situation should never arise where we end up here but the
+   * contact exists with the original given email address.
    *
    * @param string $email
    * @param int $contactID
@@ -70,13 +73,18 @@ class CRM_Emailamender_Equivalentmatcher {
     $aDomainEquivalents = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.equivalent_domains');
 
     // Try equivalent e-mail domains, if there are any
-    $aEquivalentsToTry = self::getEquivalentsFor($aEmailParts[1], $aDomainEquivalents);
-    foreach ($aEquivalentsToTry as $sEquivalent) {
+    $aEquivalentDomainsToTry = self::getEquivalentDomainsFor($aEmailParts[1], $aDomainEquivalents);
+
+    if (empty($aEquivalentDomainsToTry)) {
+      return;
+    }
+
+    foreach ($aEquivalentDomainsToTry as $sEquivalentDomain) {
       // Replace the domain part with this possible equivalent
-      $aEmailParts[1] = $sEquivalent;
+      $aEmailParts[1] = $sEquivalentDomain;
       $sEmailToTry = implode('@', $aEmailParts);
 
-      $contactID = self::tryEquivalent($sEmailToTry);
+      $contactID = self::tryEquivalentDomain($sEmailToTry);
       if ($contactID) {
         // If we found one, stop looking
         CRM_Core_Error::debug_log_message("emailamender_civicrm_emailProcessorContact: Found equivalent e-mail address $sEmailToTry for $email, with contact ID $contactID");

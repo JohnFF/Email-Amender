@@ -61,14 +61,13 @@ class CRM_Emailamender_EquivalentmatcherTest extends \PHPUnit_Framework_TestCase
     // Test contact with a present and valid email address.
     $presentContactDetails = civicrm_api3('contact', 'create', array('contact_type' => 'Individual', 'email' => 'present@gmail.com'));
     $presentResult = NULL;
-    CRM_Emailamender_Equivalentmatcher::processHook('present@gmail.com', NULL, $presentResult);
-    $this->assertEquals($presentContactDetails['id'], $presentResult['contactID']);
-    $this->assertEquals(CRM_Utils_Mail_Incoming::EMAILPROCESSOR_OVERRIDE, $presentResult['action']);
+    CRM_Emailamender_Equivalentmatcher::processHook('present@gmail.com', $presentContactDetails['id'], $presentResult);
+    $this->assertNull($presentResult); // Want normal process, not overridden.
 
     // Test that the result is null if there's a non-equivalent email.
     $nonequivalentResult = NULL;
     CRM_Emailamender_Equivalentmatcher::processHook('uniqueemail@test.test', NULL, $nonequivalentResult);
-    $this->assertFalse($nonequivalentResult);
+    $this->assertNull($nonequivalentResult);
   }
 
 }
