@@ -8,10 +8,10 @@ class CRM_Emailamender {
   private $_iCorrectedEmailAddressActivityTypeId;
 
   public function __construct() {
-    $this->_aTopLevelFilterSettings = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections');
-    $this->_aSecondLevelFilterSettings = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections');
-    $this->_aCompoundTopLevelDomains = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains');
-    $this->iCorrectedEmailAddressActivityTypeId = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.email_amended_activity_type_id');
+    $this->_aTopLevelFilterSettings = (array) CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections');
+    $this->_aSecondLevelFilterSettings = (array) CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections');
+    $this->_aCompoundTopLevelDomains = (array) CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains');
+    $this->iCorrectedEmailAddressActivityTypeId = (array) CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.email_amended_activity_type_id');
   }
 
   /**
