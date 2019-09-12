@@ -26,7 +26,6 @@ function emailamender_create_activity_type_if_doesnt_exist($sActivityTypeLabel, 
   $aActivityTypeCheck = civicrm_api("OptionValue", "get", array('version' => '3', 'sequential' => '1', 'name' => $sActivityTypeLabel));
 
   if ($aActivityTypeCheck['count'] > 0) {
-    print_r($aActivityTypeCheck, TRUE);
     CRM_Core_BAO_Setting::setItem(
       $aActivityTypeCheck['values'][0]['value'],
       'uk.org.futurefirst.networks.emailamender',
