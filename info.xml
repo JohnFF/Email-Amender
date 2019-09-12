@@ -15,11 +15,11 @@
     <author>John P Kirk</author>
     <email>john@civifirst.com</email>
   </maintainer>
-  <releaseDate>2016-11-20</releaseDate>
-  <version>2.03</version>
+  <releaseDate>2019-09-12</releaseDate>
+  <version>2.1</version>
   <develStage>stable</develStage>
   <compatibility>
-    <ver>4.7</ver>
+    <ver>5.18/ver>
   </compatibility>
   <category>Data Cleaning</category>
   <comments>The email addresses were selected based on Future First's experience of common email errors.</comments>
