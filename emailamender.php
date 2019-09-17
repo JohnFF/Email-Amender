@@ -23,32 +23,13 @@ function emailamender_civicrm_xmlMenu(&$files) {
  */
 function emailamender_create_activity_type_if_doesnt_exist($sActivityTypeLabel, $sActivityTypeName, $sActivityTypeDescription, $sSettingName) {
 
-  $aActivityTypeCheck = civicrm_api("OptionValue", "get", array('version' => '3', 'sequential' => '1', 'name' => $sActivityTypeLabel));
-
-  if ($aActivityTypeCheck['count'] > 0) {
-    print_r($aActivityTypeCheck, TRUE);
-    CRM_Core_BAO_Setting::setItem(
-      $aActivityTypeCheck['values'][0]['value'],
-      'uk.org.futurefirst.networks.emailamender',
-      $sSettingName
-    );
-
-    return;
-  }
-
-  // create activity types
-  $aEmailAmendedCreateResults = civicrm_api('ActivityType', 'create', array(
-      'version' => '3',
-      'sequential'   => '1',
-      'is_active'    => '1',
-      'label'        => $sActivityTypeLabel,
-      'name'         => $sActivityTypeName,
-      'weight'       => '1',
-      'description'  => $sActivityTypeDescription,
-    )
-  );
-
-  CRM_Core_BAO_Setting::setItem($aEmailAmendedCreateResults['values'][0]['value'], 'uk.org.futurefirst.networks.emailamender', $sSettingName);
+  CRM_Core_BAO_OptionValue::ensureOptionValueExists([
+    'label'        => $sActivityTypeLabel,
+    'name'         => $sActivityTypeName,
+    'weight'       => '1',
+    'description'  => $sActivityTypeDescription,
+    'option_group_id' => 'activity_type',
+  ]);
 }
 
 /**
