@@ -23,15 +23,6 @@ function _civicrm_api3_email_amender_update_settings_spec(&$spec) {
  */
 function civicrm_api3_email_amender_update_settings($params) {
 
-  if (!in_array($params['email_amender_enabled'], array('false', 'true'))) {
-    throw new API_Exception('Invalid enabled setting.');
-  }
-
-  CRM_Core_BAO_Setting::setItem(
-    $params['email_amender_enabled'],
-    'uk.org.futurefirst.networks.emailamender',
-    'emailamender.email_amender_enabled'
-  );
-
+  Civi::settings()->set('email_amender_enabled', $params['email_amender_enabled']);
   return civicrm_api3_create_success(NULL, $params, 'EmailAmender', 'update_settings');
 }

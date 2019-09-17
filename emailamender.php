@@ -71,11 +71,10 @@ function emailamender_civicrm_install() {
     'googlemail.co.uk' => 'GMail UK',
   );
 
-  CRM_Core_BAO_Setting::setItem($aTopLevelDomainCorrections, 'uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections');
-  CRM_Core_BAO_Setting::setItem($aSecondLevelDomainCorrections, 'uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections');
-  CRM_Core_BAO_Setting::setItem($aCompoundTopLevelDomains, 'uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains');
-  CRM_Core_BAO_Setting::setItem($aDomainEquivalents, 'uk.org.futurefirst.networks.emailamender', 'emailamender.equivalent_domains');
-  CRM_Core_BAO_Setting::setItem('false', 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled');
+  Civi::settings()->set('top_level_domain_corrections', $aTopLevelDomainCorrections);
+  Civi::settings()->set('second_level_domain_corrections', $aSecondLevelDomainCorrections);
+  Civi::settings()->set('top_level_domains', $aCompoundTopLevelDomains);
+  Civi::settings()->set('equivalent_domains', $aDomainEquivalents);
 
   // create activity types
   emailamender_create_activity_type_if_doesnt_exist('Corrected Email Address', 'corrected_email_address', 'Automatically corrected emails (by the Email Address Corrector extension).', 'emailamender.email_amended_activity_type_id');

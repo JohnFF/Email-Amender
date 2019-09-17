@@ -7,9 +7,9 @@ class CRM_Emailamender {
   private $_aCompoundTopLevelDomains;
 
   public function __construct() {
-    $this->_aTopLevelFilterSettings = (array) CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections');
-    $this->_aSecondLevelFilterSettings = (array) CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections');
-    $this->_aCompoundTopLevelDomains = (array) CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains');
+    $this->_aTopLevelFilterSettings = (array) Civi::settings()->get('emailamender.top_level_domain_corrections');
+    $this->_aSecondLevelFilterSettings = (array) Civi::settings()->get('emailamender.second_level_domain_corrections');
+    $this->_aCompoundTopLevelDomains = (array) Civi::settings()->get('emailamender.compound_top_level_domains');
   }
 
   /**
@@ -76,10 +76,7 @@ class CRM_Emailamender {
    * @return bool
    */
   public function is_autocorrect_enabled() {
-    if ('false' == CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled')) {
-      return FALSE;
-    }
-    return TRUE;
+    return Civi::settings()->get('emailamender.email_amender_enabled');
   }
 
   /**
