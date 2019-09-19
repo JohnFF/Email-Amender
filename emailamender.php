@@ -140,7 +140,7 @@ function emailamender_civicrm_navigationMenu(&$params) {
  * Implements hook_civicrm_searchTasks().
  */
 function emailamender_civicrm_searchTasks($objectType, &$tasks) {
-  if ($objectType == 'contact') {
+  if ($objectType === 'contact') {
     $tasks[] = array(
       'title'  => ts('Email - correct email addresses'),
       'class'  => 'CRM_Emailamender_Form_Task_Correctemailaddresses',

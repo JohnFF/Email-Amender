@@ -198,11 +198,11 @@ class CRM_Emailamender_IntegrationTest extends \PHPUnit_Framework_TestCase imple
 
       // Create the duplicate contact.
       $createContactResult = civicrm_api('Contact', 'create', array(
-        'version' => 3, 
-        'sequential' => 1, 
-        'contact_type' => 'Individual', 
-        'first_name' => $firstName, 
-        'last_name' => 'Gates', 
+        'version' => 3,
+        'sequential' => 1,
+        'contact_type' => 'Individual',
+        'first_name' => $firstName,
+        'last_name' => 'Gates',
         'email' => $correctEmailAddress,
       ));
 
@@ -212,7 +212,7 @@ class CRM_Emailamender_IntegrationTest extends \PHPUnit_Framework_TestCase imple
         'last_name' => 'Gates',
         'email' => $incorrectEmailAddress,
       );
-      
+
       $fields = array_keys($importValues);
       $values = array_values($importValues);
       $parser = new CRM_Contact_Import_Parser_Contact($fields);
