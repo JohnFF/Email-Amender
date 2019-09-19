@@ -78,18 +78,12 @@ function emailamender_civicrm_managed(&$entities) {
  */
 function emailamender_civicrm_post($op, $objectName, $id, &$params) {
   // 1. ignore all operations other than adding an email address
-  if ($objectName != "Email") {
-    return;
-  }
-
-  if ($op != "create") {
+  if ($objectName !== 'Email' || $op !== 'create' || !Civi::settings()->get('emailamender.email_amender_enabled')) {
     return;
   }
 
   $emailAmender = new CRM_Emailamender();
-  if ($emailAmender->is_autocorrect_enabled()) {
-    $emailAmender->check_for_corrections($params->id, $params->contact_id, $params->email);
-  }
+  $emailAmender->check_for_corrections($params->id, $params->contact_id, $params->email);
 }
 
 /**
