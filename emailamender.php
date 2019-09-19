@@ -148,3 +148,18 @@ function emailamender_civicrm_searchTasks($objectType, &$tasks) {
     );
   }
 }
+
+/**
+ * Implements hook_civicrm_angularModules().
+ *
+ * Generate a list of Angular modules.
+ * Generate a list of Angular modules.
+ *
+ * Note: This hook only runs in CiviCRM 4.5+. It may
+ * use features only available in v4.6+.
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_angularModules
+ */
+function emailamender_civicrm_angularModules(&$angularModules) {
+  _emailamender_civix_civicrm_angularModules($angularModules);
+}
