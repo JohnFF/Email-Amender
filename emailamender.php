@@ -82,7 +82,7 @@ function emailamender_civicrm_post($op, $objectName, $id, &$params) {
     return;
   }
 
-  $emailAmender = new CRM_Emailamender();
+  $emailAmender = CRM_Emailamender::singleton();
   $emailAmender->check_for_corrections($params->id, $params->contact_id, $params->email);
 }
 

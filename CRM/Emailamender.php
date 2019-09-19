@@ -2,6 +2,12 @@
 
 class CRM_Emailamender {
 
+  /**
+   * Singleton instance.
+   *
+   * @var \CRM_Emailamender
+   */
+  private static $singleton;
   private $_aTopLevelFilterSettings;
   private $_aSecondLevelFilterSettings;
   private $_aCompoundTopLevelDomains;
@@ -90,7 +96,7 @@ class CRM_Emailamender {
   public function check_for_corrections($iEmailId, $iContactId, $sRawEmail) {
 
     // 1. Check that the email address has only one '@' - shouldn't need to do this but just in case.
-    if (substr_count($sRawEmail, "@") != 1) {
+    if (substr_count($sRawEmail, '@') !== 1) {
       return FALSE;
     }
 
@@ -98,7 +104,7 @@ class CRM_Emailamender {
     self::parse_email_byref($sRawEmail, $aEmailPieces, $aDomainPartPieces);
 
     // 3. Load the settings and initialise.
-    $iSecondLevelDomainFragmentIndex = self::get_second_domain_part_index($aEmailPieces[1]);
+    $iSecondLevelDomainFragmentIndex = $this->get_second_domain_part_index($aEmailPieces[1]);
 
     // 4. Break it up and process it.
     $bTopLevelChanged = self::perform_replacement($aDomainPartPieces[0], $this->_aTopLevelFilterSettings);
@@ -148,6 +154,19 @@ class CRM_Emailamender {
     }
 
     return TRUE;
+  }
+
+  /**
+   * Get singleton instance.
+   *
+   * @return \CRM_Emailamender
+   */
+  public static function singleton() {
+    if (self::$singleton) {
+      return self::$singleton;
+    }
+    self::$singleton = new CRM_Emailamender();
+    return self::$singleton;
   }
 
 }
