@@ -17,68 +17,16 @@ function emailamender_civicrm_xmlMenu(&$files) {
 }
 
 /**
- * create_activity_type_if_doesnt_exist
- * also updates the civicrm_setting entry
- *
- */
-function emailamender_create_activity_type_if_doesnt_exist($sActivityTypeLabel, $sActivityTypeName, $sActivityTypeDescription, $sSettingName) {
-
-  CRM_Core_BAO_OptionValue::ensureOptionValueExists([
-    'label'        => $sActivityTypeLabel,
-    'name'         => $sActivityTypeName,
-    'weight'       => '1',
-    'description'  => $sActivityTypeDescription,
-    'option_group_id' => 'activity_type',
-  ]);
-}
-
-/**
  * Implements hook_civicrm_install().
  */
 function emailamender_civicrm_install() {
-
-  // initialise data
-  $aTopLevelDomainCorrections = array(
-    'con'  => 'com',
-    'couk' => 'co.uk',
-    'cpm'  => 'com',
-    'orguk'  => 'org.uk',
-  );
-
-  $aSecondLevelDomainCorrections = array(
-    'gmai'     => 'gmail',
-    'gamil'    => 'gmail',
-    'gmial'    => 'gmail',
-    'hotmai'   => 'hotmail',
-    'hotmal'   => 'hotmail',
-    'hotmil'   => 'hotmail',
-    'hotmial'  => 'hotmail',
-    'htomail'  => 'hotmail',
-    'tiscalli' => 'tiscali',
-    'yaho'     => 'yahoo',
-  );
-
-  $aCompoundTopLevelDomains = array(
-    '.ac.uk',
-    '.co.uk',
-    '.org.uk',
-  );
-
-  $aDomainEquivalents = array(
-    'gmail.com'        => 'GMail',
-    'googlemail.com'   => 'GMail',
-    'gmail.co.uk'      => 'GMail UK',
-    'googlemail.co.uk' => 'GMail UK',
-  );
-
-  Civi::settings()->set('top_level_domain_corrections', $aTopLevelDomainCorrections);
-  Civi::settings()->set('second_level_domain_corrections', $aSecondLevelDomainCorrections);
-  Civi::settings()->set('top_level_domains', $aCompoundTopLevelDomains);
-  Civi::settings()->set('equivalent_domains', $aDomainEquivalents);
-
-  // create activity types
-  emailamender_create_activity_type_if_doesnt_exist('Corrected Email Address', 'corrected_email_address', 'Automatically corrected emails (by the Email Address Corrector extension).', 'emailamender.email_amended_activity_type_id');
-
+  CRM_Core_BAO_OptionValue::ensureOptionValueExists([
+    'label'        => 'Corrected Email Address',
+    'name'         => 'corrected_email_address',
+    'weight'       => '1',
+    'description'  => 'Automatically corrected emails (by the Email Address Corrector extension).',
+    'option_group_id' => 'activity_type',
+  ]);
   return _emailamender_civix_civicrm_install();
 }
 
@@ -149,6 +97,15 @@ function emailamender_civicrm_post($op, $objectName, $id, &$params) {
  */
 function emailamender_civicrm_emailProcessorContact($email, $contactID, &$result) {
   CRM_Emailamender_Equivalentmatcher::processHook($email, $contactID, $result);
+}
+
+/**
+ * Implements hook_civicrm_alterSettingsFolders().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
+ */
+function emailamender_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
+  _emailamender_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
 /**

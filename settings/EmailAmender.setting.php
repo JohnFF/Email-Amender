@@ -9,10 +9,10 @@ use CRM_Emailamender_ExtensionUtil as E;
  * Time: 4:30 PM
  */
 return [
-  'email_amender_enabled' => [
+  'emailamender.email_amender_enabled' => [
     'group_name' => 'Email Amender',
     'group' => 'email_amender',
-    'name' => 'email_amender_enabled',
+    'name' => 'emailamender.email_amender_enabled',
     'type' => 'Bool',
     'is_domain' => 1,
     'is_contact' => 0,
@@ -23,10 +23,10 @@ return [
     'html_type' => 'Checkbox',
     'quick_form_type' => '',
   ],
-  'top_level_domain_corrections' => [
+  'emailamender.top_level_domain_corrections' => [
     'group_name' => 'Email Amender',
     'group' => 'email_amender',
-    'name' => 'top_level_domain_corrections',
+    'name' => 'emailamender.top_level_domain_corrections',
     'type' => 'String',
     'is_domain' => 1,
     'is_contact' => 0,
@@ -35,11 +35,18 @@ return [
     'help_text' => '',
     'html_type' => '',
     'quick_form_type' => '',
+    'serialize' => CRM_Core_DAO::SERIALIZE_PHP,
+    'default' => [
+      'con'  => 'com',
+      'couk' => 'co.uk',
+      'cpm'  => 'com',
+      'orguk'  => 'org.uk',
+    ],
   ],
-  'second_level_domain_corrections' => [
+  'emailamender.second_level_domain_corrections' => [
     'group_name' => 'Email Amender',
     'group' => 'email_amender',
-    'name' => 'second_level_domain_corrections',
+    'name' => 'emailamender.second_level_domain_corrections',
     'type' => 'String',
     'is_domain' => 1,
     'is_contact' => 0,
@@ -48,11 +55,24 @@ return [
     'help_text' => '',
     'html_type' => '',
     'quick_form_type' => '',
+    'serialize' => CRM_Core_DAO::SERIALIZE_PHP,
+    'default' => [
+      'gmai'     => 'gmail',
+      'gamil'    => 'gmail',
+      'gmial'    => 'gmail',
+      'hotmai'   => 'hotmail',
+      'hotmal'   => 'hotmail',
+      'hotmil'   => 'hotmail',
+      'hotmial'  => 'hotmail',
+      'htomail'  => 'hotmail',
+      'tiscalli' => 'tiscali',
+      'yaho'     => 'yahoo',
+    ],
   ],
-  'compound_top_level_domains' => [
+  'emailamender.compound_top_level_domains' => [
     'group_name' => 'Email Amender',
     'group' => 'email_amender',
-    'name' => 'compound_top_level_domains',
+    'name' => 'emailamender.compound_top_level_domains',
     'type' => 'String',
     'is_domain' => 1,
     'is_contact' => 0,
@@ -61,8 +81,14 @@ return [
     'help_text' => '',
     'html_type' => '',
     'quick_form_type' => '',
+    'serialize' => CRM_Core_DAO::SERIALIZE_PHP,
+    'default' => [
+      '.ac.uk',
+      '.co.uk',
+      '.org.uk',
+    ],
   ],
-  'equivalent_domains' => [
+  'emailamender.equivalent_domains' => [
     'group_name' => 'Email Amender',
     'group' => 'email_amender',
     'name' => 'equivalent_domains',
@@ -74,5 +100,12 @@ return [
     'help_text' => '',
     'html_type' => '',
     'quick_form_type' => '',
+    'serialize' => CRM_Core_DAO::SERIALIZE_PHP,
+    'default' => [
+      'gmail.com'        => 'GMail',
+      'googlemail.com'   => 'GMail',
+      'gmail.co.uk'      => 'GMail UK',
+      'googlemail.co.uk' => 'GMail UK',
+    ],
   ],
 ];

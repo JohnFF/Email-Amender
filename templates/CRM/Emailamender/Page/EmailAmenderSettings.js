@@ -180,9 +180,8 @@ jQuery('.add_new_compound_tld').click(function () {
 });
 
 jQuery('#email_amender_enabled').click(function () {
-  CRM.api3('EmailAmender', 'update_settings', {
-      'sequential': '1',
-      'email_amender_enabled': jQuery(this).is(':checked').toString()
+  CRM.api3('Setting', 'create', {
+      'emailamender.email_amender_enabled': jQuery(this).is(':checked')
     }
     , {
       success: function (data) {

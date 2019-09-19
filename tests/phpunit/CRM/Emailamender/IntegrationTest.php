@@ -29,10 +29,9 @@ class CRM_Emailamender_IntegrationTest extends \PHPUnit_Framework_TestCase imple
   }
 
   public function setUp() {
-    civicrm_api3('EmailAmender', 'update_settings', array(
-      'sequential' => 1,
+    civicrm_api3('Setting', 'create', [
       'email_amender_enabled' => 'true',
-    ));
+    ]);
     parent::setUp();
   }
 
@@ -114,10 +113,9 @@ class CRM_Emailamender_IntegrationTest extends \PHPUnit_Framework_TestCase imple
    * Test that email addresses aren't updated if the setting is disabled.
    */
   public function testEnabledSettingOff() {
-    civicrm_api3('EmailAmender', 'update_settings', array(
-      'sequential' => 1,
-      'email_amender_enabled' => 0,
-    ));
+    civicrm_api3('Setting', 'create', [
+      'email_amender_enabled' => FALSE,
+    ]);
     $emailDetails = self::createTestContact('john@yaho.com');
     $this->assertEquals('john@yaho.com', $emailDetails['email']);
     $this->assertEquals(0, self::getCorrectedEmailAddressActivityCount($emailDetails['contact_id']), 'Found: ' . print_r(self::getCorrectedEmailAddressActivityCount($emailDetails['contact_id']), TRUE));

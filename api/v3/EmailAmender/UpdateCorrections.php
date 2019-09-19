@@ -30,15 +30,15 @@ function civicrm_api3_email_amender_update_corrections($params) {
   }
   switch($params['domain_level']){
     case 'top_level_domain':
-      Civi::settings()->set('top_level_domain_corrections', $aEscapedCorrections);
+      Civi::settings()->set('emailamender.top_level_domain_corrections', $aEscapedCorrections);
       break;
 
     case 'second_level_domain':
-      Civi::settings()->set('second_level_domain_corrections', $aEscapedCorrections);
+      Civi::settings()->set('emailamender.second_level_domain_corrections', $aEscapedCorrections);
       break;
 
     case 'equivalent_domain':
-      Civi::settings()->set('equivalent_domains', $aEscapedCorrections);
+      Civi::settings()->set('emailamender.equivalent_domains', $aEscapedCorrections);
       break;
 
     default:

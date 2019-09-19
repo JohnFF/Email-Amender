@@ -29,7 +29,7 @@ function civicrm_api3_email_amender_update_compound_t_l_ds($params) {
     $aEscapedCorrections[] = CRM_Core_DAO::escapeString($compoundTLDs);
   }
 
-  Civi::settings()->set('compound_top_level_domains', $aEscapedCorrections);
+  Civi::settings()->set('emailamender.compound_top_level_domains', $aEscapedCorrections);
 
   return civicrm_api3_create_success(array(), $params, 'EmailAmenderCompoundTLDs', 'Update');
 }
