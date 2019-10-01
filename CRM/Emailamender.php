@@ -91,9 +91,12 @@ class CRM_Emailamender {
    * @param int $iEmailId
    * @param int $iContactId
    * @param string $sRawEmail
+   *
    * @return bool correction took place
+   *
+   * @throws \CiviCRM_API3_Exception
    */
-  public function check_for_corrections($iEmailId, $iContactId, $sRawEmail) {
+  public function fixeEmailAddress($iEmailId, $iContactId, $sRawEmail) {
 
     // 1. Check that the email address has only one '@' - shouldn't need to do this but just in case.
     if (substr_count($sRawEmail, '@') !== 1) {
@@ -120,7 +123,6 @@ class CRM_Emailamender {
 
     // 7. Update the email address.
     $updateParam = array(
-      'version' => 3,
       'id' => $iEmailId,
       'email' => $sCleanedEmail,
       // Take it off hold, taken from CRM_Core_BAO_Email.
@@ -129,11 +131,12 @@ class CRM_Emailamender {
       'reset_date' => date('YmdHis'),
     );
 
-    $updateEmailOutput = civicrm_api('Email', 'update', $updateParam);
-
-    if ($updateEmailOutput['is_error']) {
+    try {
+      civicrm_api3('Email', 'create', $updateParam);
+    }
+    catch (CiviCRM_API3_Exception $e) {
       CRM_Core_Session::setStatus(ts("Error when correcting email - contact ID $iContactId"), ts('Email Address Corrector'), 'error');
-      return FALSE;
+      throw $e;
     }
 
     // 8. Record the change by an activity.
