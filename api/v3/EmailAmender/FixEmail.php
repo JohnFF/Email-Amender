@@ -26,7 +26,7 @@ function _civicrm_api3_email_amender_fix_email_spec(&$spec) {
 function civicrm_api3_email_amender_fix_email($params) {
   $emailAmender = CRM_Emailamender::singleton();
   $return = [];
-  if ($emailAmender->fixeEmailAddress($params['id'], $params['contact_id'], $params['email'])) {
+  if ($emailAmender->fixEmailAddress($params['id'], $params['contact_id'], $params['email'])) {
     $return[$params['id']] = ['id' => $params['id'], 'contact_id' => $params['contact_id']];
   }
 

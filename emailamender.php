@@ -83,7 +83,7 @@ function emailamender_civicrm_post($op, $objectName, $id, &$params) {
   }
 
   $emailAmender = CRM_Emailamender::singleton();
-  $emailAmender->fixeEmailAddress($params->id, $params->contact_id, $params->email);
+  $emailAmender->fixEmailAddress($params->id, $params->contact_id, $params->email);
 }
 
 /**

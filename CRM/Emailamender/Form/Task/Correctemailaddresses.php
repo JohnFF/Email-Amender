@@ -41,7 +41,7 @@ class CRM_Emailamender_Form_Task_Correctemailaddresses extends CRM_Contact_Form_
       $emailAddresses = civicrm_api('Email', 'get', $updateParam);
 
       foreach ($emailAddresses['values'] as $eachEmailAddress) {
-        if ($emailAmender->fixeEmailAddress($eachEmailAddress['id'], $eachEmailAddress['contact_id'], $eachEmailAddress['email'])) {
+        if ($emailAmender->fixEmailAddress($eachEmailAddress['id'], $eachEmailAddress['contact_id'], $eachEmailAddress['email'])) {
           $correctionCount++;
         }
       }

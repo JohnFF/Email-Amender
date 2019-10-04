@@ -96,7 +96,7 @@ class CRM_Emailamender {
    *
    * @throws \CiviCRM_API3_Exception
    */
-  public function fixeEmailAddress($iEmailId, $iContactId, $sRawEmail) {
+  public function fixEmailAddress($iEmailId, $iContactId, $sRawEmail) {
 
     // 1. Check that the email address has only one '@' - shouldn't need to do this but just in case.
     if (substr_count($sRawEmail, '@') !== 1) {
