@@ -57,6 +57,8 @@ class CRM_Emailamender_BatchUpdateTest extends \PHPUnit_Framework_TestCase imple
 
   /**
    * Test for email addresses on contacts created via the API.
+   *
+   * @throws \CRM_Core_Exception
    */
   public function testBatchUpdate() {
     $this->callApiSuccess('Setting', 'create', ['emailamender.email_amender_enabled' => FALSE]);
@@ -98,6 +100,7 @@ class CRM_Emailamender_BatchUpdateTest extends \PHPUnit_Framework_TestCase imple
     $this->assertCount(2, $candidates);
 
     $this->callApiSuccessGetCount('Activity', ['activity_type_id' => 'corrected_email_address', 'id' => ['>' => $this->maxExistingActivityID]], 10);
+    $this->assertEquals('john@gmail.com', $this->callAPISuccessGetValue('Contact', ['id' => $this->ids['Contact'][0], 'return' => 'display_name']));
   }
 
 }

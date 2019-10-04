@@ -122,17 +122,19 @@ class CRM_Emailamender {
     $sCleanedEmail = self::reassemble_email($aEmailPieces, $aDomainPartPieces);
 
     // 7. Update the email address.
-    $updateParam = array(
+    $updateParam = [
       'id' => $iEmailId,
       'email' => $sCleanedEmail,
       // Take it off hold, taken from CRM_Core_BAO_Email.
       'on_hold' => FALSE,
       'hold_date' => NULL,
       'reset_date' => date('YmdHis'),
-    );
+    ];
 
     try {
       civicrm_api3('Email', 'create', $updateParam);
+      // Recalculate display name.
+      civicrm_api3('Contact', 'create', ['id' => $iContactId]);
     }
     catch (CiviCRM_API3_Exception $e) {
       CRM_Core_Session::setStatus(ts("Error when correcting email - contact ID $iContactId"), ts('Email Address Corrector'), 'error');
