@@ -19,7 +19,7 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class CRM_Emailamender_EquivalentmatcherTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class CRM_Emailamender_EquivalentmatcherTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
 
   public function setUpHeadless() {
     // Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
@@ -41,7 +41,7 @@ class CRM_Emailamender_EquivalentmatcherTest extends \PHPUnit_Framework_TestCase
    * Example: Test that a version is returned.
    */
   public function testEquivalentMatch() {
-    
+
     // Test contact with gmail address receiving a googlemail email.
     $gmailContactDetails = civicrm_api3('contact', 'create', array('contact_type' => 'Individual', 'email' => 'gmailtest@gmail.com'));
     $gmailContactResult = NULL;
