@@ -2,16 +2,20 @@
 
 class CRM_Emailamender {
 
+  /**
+   * Singleton instance.
+   *
+   * @var \CRM_Emailamender
+   */
+  private static $singleton;
   private $_aTopLevelFilterSettings;
   private $_aSecondLevelFilterSettings;
   private $_aCompoundTopLevelDomains;
-  private $_iCorrectedEmailAddressActivityTypeId;
 
   public function __construct() {
-    $this->_aTopLevelFilterSettings = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections');
-    $this->_aSecondLevelFilterSettings = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections');
-    $this->_aCompoundTopLevelDomains = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains');
-    $this->iCorrectedEmailAddressActivityTypeId = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.email_amended_activity_type_id');
+    $this->_aTopLevelFilterSettings = (array) Civi::settings()->get('emailamender.top_level_domain_corrections');
+    $this->_aSecondLevelFilterSettings = (array) Civi::settings()->get('emailamender.second_level_domain_corrections');
+    $this->_aCompoundTopLevelDomains = (array) Civi::settings()->get('emailamender.compound_top_level_domains');
   }
 
   /**
@@ -78,10 +82,7 @@ class CRM_Emailamender {
    * @return bool
    */
   public function is_autocorrect_enabled() {
-    if ('false' == CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled')) {
-      return FALSE;
-    }
-    return TRUE;
+    return Civi::settings()->get('emailamender.email_amender_enabled');
   }
 
   /**
@@ -90,12 +91,15 @@ class CRM_Emailamender {
    * @param int $iEmailId
    * @param int $iContactId
    * @param string $sRawEmail
+   *
    * @return bool correction took place
+   *
+   * @throws \CiviCRM_API3_Exception
    */
-  public function check_for_corrections($iEmailId, $iContactId, $sRawEmail) {
+  public function fixEmailAddress($iEmailId, $iContactId, $sRawEmail) {
 
     // 1. Check that the email address has only one '@' - shouldn't need to do this but just in case.
-    if (substr_count($sRawEmail, "@") != 1) {
+    if (substr_count($sRawEmail, '@') !== 1) {
       return FALSE;
     }
 
@@ -103,7 +107,7 @@ class CRM_Emailamender {
     self::parse_email_byref($sRawEmail, $aEmailPieces, $aDomainPartPieces);
 
     // 3. Load the settings and initialise.
-    $iSecondLevelDomainFragmentIndex = self::get_second_domain_part_index($aEmailPieces[1]);
+    $iSecondLevelDomainFragmentIndex = $this->get_second_domain_part_index($aEmailPieces[1]);
 
     // 4. Break it up and process it.
     $bTopLevelChanged = self::perform_replacement($aDomainPartPieces[0], $this->_aTopLevelFilterSettings);
@@ -118,28 +122,30 @@ class CRM_Emailamender {
     $sCleanedEmail = self::reassemble_email($aEmailPieces, $aDomainPartPieces);
 
     // 7. Update the email address.
-    $updateParam = array(
-      'version' => 3,
+    $updateParam = [
       'id' => $iEmailId,
       'email' => $sCleanedEmail,
       // Take it off hold, taken from CRM_Core_BAO_Email.
       'on_hold' => FALSE,
       'hold_date' => NULL,
       'reset_date' => date('YmdHis'),
-    );
+    ];
 
-    $updateEmailOutput = civicrm_api('Email', 'update', $updateParam);
-
-    if ($updateEmailOutput['is_error']) {
+    try {
+      civicrm_api3('Email', 'create', $updateParam);
+      // Recalculate display name.
+      civicrm_api3('Contact', 'create', ['id' => $iContactId]);
+    }
+    catch (CiviCRM_API3_Exception $e) {
       CRM_Core_Session::setStatus(ts("Error when correcting email - contact ID $iContactId"), ts('Email Address Corrector'), 'error');
-      return FALSE;
+      throw $e;
     }
 
     // 8. Record the change by an activity.
     $createActivityOutput = civicrm_api('Activity', 'create', array(
       'version' => '3',
       'sequential' => '1',
-      'activity_type_id' => $this->iCorrectedEmailAddressActivityTypeId,
+      'activity_type_id' => 'corrected_email_address',
       'source_contact_id' => $iContactId,
       'target_contact_id' => $iContactId,
       'assignee_contact_id' => $iContactId,
@@ -153,6 +159,19 @@ class CRM_Emailamender {
     }
 
     return TRUE;
+  }
+
+  /**
+   * Get singleton instance.
+   *
+   * @return \CRM_Emailamender
+   */
+  public static function singleton() {
+    if (self::$singleton) {
+      return self::$singleton;
+    }
+    self::$singleton = new CRM_Emailamender();
+    return self::$singleton;
   }
 
 }

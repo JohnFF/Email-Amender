@@ -17,88 +17,16 @@ function emailamender_civicrm_xmlMenu(&$files) {
 }
 
 /**
- * create_activity_type_if_doesnt_exist
- * also updates the civicrm_setting entry
- *
- */
-function emailamender_create_activity_type_if_doesnt_exist($sActivityTypeLabel, $sActivityTypeName, $sActivityTypeDescription, $sSettingName) {
-
-  $aActivityTypeCheck = civicrm_api("OptionValue", "get", array('version' => '3', 'sequential' => '1', 'name' => $sActivityTypeLabel));
-
-  if ($aActivityTypeCheck['count'] > 0) {
-    print_r($aActivityTypeCheck, TRUE);
-    CRM_Core_BAO_Setting::setItem(
-      $aActivityTypeCheck['values'][0]['value'],
-      'uk.org.futurefirst.networks.emailamender',
-      $sSettingName
-    );
-
-    return;
-  }
-
-  // create activity types
-  $aEmailAmendedCreateResults = civicrm_api('ActivityType', 'create', array(
-      'version' => '3',
-      'sequential'   => '1',
-      'is_active'    => '1',
-      'label'        => $sActivityTypeLabel,
-      'name'         => $sActivityTypeName,
-      'weight'       => '1',
-      'description'  => $sActivityTypeDescription,
-    )
-  );
-
-  CRM_Core_BAO_Setting::setItem($aEmailAmendedCreateResults['values'][0]['value'], 'uk.org.futurefirst.networks.emailamender', $sSettingName);
-}
-
-/**
  * Implements hook_civicrm_install().
  */
 function emailamender_civicrm_install() {
-
-  // initialise data
-  $aTopLevelDomainCorrections = array(
-    'con'  => 'com',
-    'couk' => 'co.uk',
-    'cpm'  => 'com',
-    'orguk'  => 'org.uk',
-  );
-
-  $aSecondLevelDomainCorrections = array(
-    'gmai'     => 'gmail',
-    'gamil'    => 'gmail',
-    'gmial'    => 'gmail',
-    'hotmai'   => 'hotmail',
-    'hotmal'   => 'hotmail',
-    'hotmil'   => 'hotmail',
-    'hotmial'  => 'hotmail',
-    'htomail'  => 'hotmail',
-    'tiscalli' => 'tiscali',
-    'yaho'     => 'yahoo',
-  );
-
-  $aCompoundTopLevelDomains = array(
-    '.ac.uk',
-    '.co.uk',
-    '.org.uk',
-  );
-
-  $aDomainEquivalents = array(
-    'gmail.com'        => 'GMail',
-    'googlemail.com'   => 'GMail',
-    'gmail.co.uk'      => 'GMail UK',
-    'googlemail.co.uk' => 'GMail UK',
-  );
-
-  CRM_Core_BAO_Setting::setItem($aTopLevelDomainCorrections, 'uk.org.futurefirst.networks.emailamender', 'emailamender.top_level_domain_corrections');
-  CRM_Core_BAO_Setting::setItem($aSecondLevelDomainCorrections, 'uk.org.futurefirst.networks.emailamender', 'emailamender.second_level_domain_corrections');
-  CRM_Core_BAO_Setting::setItem($aCompoundTopLevelDomains, 'uk.org.futurefirst.networks.emailamender', 'emailamender.compound_top_level_domains');
-  CRM_Core_BAO_Setting::setItem($aDomainEquivalents, 'uk.org.futurefirst.networks.emailamender', 'emailamender.equivalent_domains');
-  CRM_Core_BAO_Setting::setItem('false', 'uk.org.futurefirst.networks.emailamender', 'emailamender.email_amender_enabled');
-
-  // create activity types
-  emailamender_create_activity_type_if_doesnt_exist('Corrected Email Address', 'corrected_email_address', 'Automatically corrected emails (by the Email Address Corrector extension).', 'emailamender.email_amended_activity_type_id');
-
+  CRM_Core_BAO_OptionValue::ensureOptionValueExists([
+    'label'        => 'Corrected Email Address',
+    'name'         => 'corrected_email_address',
+    'weight'       => '1',
+    'description'  => 'Automatically corrected emails (by the Email Address Corrector extension).',
+    'option_group_id' => 'activity_type',
+  ]);
   return _emailamender_civix_civicrm_install();
 }
 
@@ -150,18 +78,12 @@ function emailamender_civicrm_managed(&$entities) {
  */
 function emailamender_civicrm_post($op, $objectName, $id, &$params) {
   // 1. ignore all operations other than adding an email address
-  if ($objectName != "Email") {
+  if ($objectName !== 'Email' || $op !== 'create' || !Civi::settings()->get('emailamender.email_amender_enabled')) {
     return;
   }
 
-  if ($op != "create") {
-    return;
-  }
-
-  $emailAmender = new CRM_Emailamender();
-  if ($emailAmender->is_autocorrect_enabled()) {
-    $emailAmender->check_for_corrections($params->id, $params->contact_id, $params->email);
-  }
+  $emailAmender = CRM_Emailamender::singleton();
+  $emailAmender->fixEmailAddress($params->id, $params->contact_id, $params->email);
 }
 
 /**
@@ -169,6 +91,15 @@ function emailamender_civicrm_post($op, $objectName, $id, &$params) {
  */
 function emailamender_civicrm_emailProcessorContact($email, $contactID, &$result) {
   CRM_Emailamender_Equivalentmatcher::processHook($email, $contactID, $result);
+}
+
+/**
+ * Implements hook_civicrm_alterSettingsFolders().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
+ */
+function emailamender_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
+  _emailamender_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
 /**
@@ -203,11 +134,26 @@ function emailamender_civicrm_navigationMenu(&$params) {
  * Implements hook_civicrm_searchTasks().
  */
 function emailamender_civicrm_searchTasks($objectType, &$tasks) {
-  if ($objectType == 'contact') {
+  if ($objectType === 'contact') {
     $tasks[] = array(
       'title'  => ts('Email - correct email addresses'),
       'class'  => 'CRM_Emailamender_Form_Task_Correctemailaddresses',
       'result' => TRUE,
     );
   }
+}
+
+/**
+ * Implements hook_civicrm_angularModules().
+ *
+ * Generate a list of Angular modules.
+ * Generate a list of Angular modules.
+ *
+ * Note: This hook only runs in CiviCRM 4.5+. It may
+ * use features only available in v4.6+.
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_angularModules
+ */
+function emailamender_civicrm_angularModules(&$angularModules) {
+  _emailamender_civix_civicrm_angularModules($angularModules);
 }
