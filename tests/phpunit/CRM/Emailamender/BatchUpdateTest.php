@@ -36,7 +36,7 @@ class CRM_Emailamender_BatchUpdateTest extends \PHPUnit\Framework\TestCase imple
       ->apply();
   }
 
-  public function setUp() {
+  public function setUp(): void {
     $this->callAPISuccess('Setting', 'create', [
       'emailamender.email_amender_enabled' => 'true',
     ]);
@@ -47,7 +47,7 @@ class CRM_Emailamender_BatchUpdateTest extends \PHPUnit\Framework\TestCase imple
     $this->maxExistingActivityID = $activities[0] ?? 0;
   }
 
-  public function tearDown() {
+  public function tearDown(): void {
     $this->callApiSuccess('Activity', 'get', ['activity_type_id' => 'corrected_email_address', 'id' => ['>' => $this->maxExistingActivityID], 'api.Activity.delete' => TRUE]);
     foreach ($this->ids['Contact'] as $contactID) {
       $this->callAPISuccess('Contact', 'delete', ['skip_undelete' => 1, 'id' => $contactID]);

@@ -29,11 +29,11 @@ class CRM_Emailamender_EquivalentmatcherTest extends \PHPUnit\Framework\TestCase
       ->apply();
   }
 
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
   }
 
-  public function tearDown() {
+  public function tearDown(): void {
     parent::tearDown();
   }
 

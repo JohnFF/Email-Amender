@@ -29,8 +29,7 @@ class CRM_Emailamender_IntegrationTest extends \PHPUnit\Framework\TestCase imple
       ->apply();
   }
 
-  public function setUp() {
-    civicrm_initialize();
+  public function setUp(): void {
     $this->callApiSuccess('Setting', 'create', [
       'emailamender.email_amender_enabled' => TRUE,
     ]);
@@ -45,7 +44,7 @@ class CRM_Emailamender_IntegrationTest extends \PHPUnit\Framework\TestCase imple
    */
   protected $ids = [];
 
-  public function tearDown() {
+  public function tearDown(): void {
     $this->callApiSuccess('Activity', 'get', ['activity_type_id' => 'corrected_email_address', 'id' => ['>' => (int) $this->maxExistingActivityID], 'api.Activity.delete' => TRUE]);
     foreach (($this->ids['Contact']  ?? [])as $contactID) {
       $this->callAPISuccess('Contact', 'delete', ['skip_undelete' => 1, 'id' => $contactID]);
