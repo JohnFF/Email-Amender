@@ -19,7 +19,9 @@
   <version>3.0.0</version>
   <develStage>stable</develStage>
   <compatibility>
+    <ver>4.7</ver>
     <ver>5.18</ver>
+    <ver>5.22</ver>
   </compatibility>
   <category>Data Cleaning</category>
   <comments>The email addresses were selected based on Future First's experience of common email errors.</comments>
