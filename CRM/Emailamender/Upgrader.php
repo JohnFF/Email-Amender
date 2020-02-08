@@ -19,7 +19,7 @@ class CRM_Emailamender_Upgrader extends CRM_Emailamender_Upgrader_Base {
     $this->ctx->log->info('Applying update 0001');
 
     // Check if the setting is already present
-    $aDomainEquivalents = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'uk.org.futurefirst.networks.emailamender.equivalent_domains');
+    $aDomainEquivalents =  Civi::settings()->get('emailamender.equivalent_domains');
     if ($aDomainEquivalents) {
       return TRUE;
     }
@@ -31,10 +31,10 @@ class CRM_Emailamender_Upgrader extends CRM_Emailamender_Upgrader_Base {
       'gmail.co.uk'      => 'GMail UK',
       'googlemail.co.uk' => 'GMail UK',
     );
-    CRM_Core_BAO_Setting::setItem($aDomainEquivalents, 'uk.org.futurefirst.networks.emailamender', 'uk.org.futurefirst.networks.emailamender.equivalent_domains');
+    Civi::settings()->set('equivalent_domains', $aDomainEquivalents);
 
     // Check if the setting is now present (as setItem returns void)
-    $aDomainEquivalents = CRM_Core_BAO_Setting::getItem('uk.org.futurefirst.networks.emailamender', 'uk.org.futurefirst.networks.emailamender.equivalent_domains');
+    $aDomainEquivalents =  Civi::settings()->get('equivalent_domains');
     if ($aDomainEquivalents) {
       return TRUE;
     }
