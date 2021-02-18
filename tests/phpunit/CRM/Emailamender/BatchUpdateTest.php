@@ -44,7 +44,7 @@ class CRM_Emailamender_BatchUpdateTest extends \PHPUnit\Framework\TestCase imple
     $this->callApiSuccess('EmailAmender', 'batch_update', [])['values'];
     parent::setUp();
     $activities = $this->callAPISuccess('Activity', 'get', ['return' => 'id', 'activity_type_id' => 'corrected_email_address', 'sequential' => 1, 'options' => ['sort' => 'id DESC', 'limit' => 1]])['values'];
-    $this->maxExistingActivityID = $activities[0] ?? 0;
+    $this->maxExistingActivityID = $activities[0]['id'] ?? 0;
   }
 
   public function tearDown(): void {
