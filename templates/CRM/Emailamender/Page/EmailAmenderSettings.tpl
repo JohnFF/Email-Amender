@@ -8,12 +8,12 @@
          id="email_amender_enabled" {if $email_amender_enabled eq "true"} checked="checked" {/if}>{ts}Enable automatic email corrections.{/ts}
 </div>
 <br/>
-<p>The Email Amender has been designed not to affect edits made to any email addresses, or to change any email addresses
+<p>The Email Address Corrector has been designed not to affect edits made to any email addresses, or to change any email addresses
   that are already in your system. It will only act when new email addresses are added.<br/><br/>
-  You can add, remove, and edit the automatic corrections using the forms below.<br/><br/>
-  There are two types of corrections that can be made. Top Level Domains, such as "com" in
-  "john@hotmail.<strong>com</strong>", have one set of corrections. Second Level Domains, such as "gmail" in
-  "john@<strong>gmail</strong>.com" have another set of corrections.<br/><br/>
+  You can add, remove, and edit the automatic correction rules using the forms below.<br/><br/>
+  There are two types of correction rules that can be made. Top Level Domains, such as "com" in
+  "john@hotmail.<strong>com</strong>", have one set of correction rules. Second Level Domains, such as "gmail" in
+  "john@<strong>gmail</strong>.com" have another set of correction rules.<br/><br/>
   Incorrect Top Level Domains and Second Level Domains can be corrected in the same email address. So <strong>john@hotmai.cpm</strong>
   will be corrected to <strong>john@hotmail.com</strong>.<br/><br/>
   Some Top Level Domains are "compounds", for instance ".co.uk" ".ac.uk" and ".org.uk". They are treated as a Top Level
@@ -22,14 +22,14 @@
   new compound Top Level Domains using the form below.<br/><br/>
   Subdomains are not examined, and neither is anything before the @ sign. So <strong>gmai@gmai.gmai.com</strong> will be
   corrected to <strong>gmai@gmai.gmail.com</strong><br/><br/>
-  An activity of type "Amended Email" is recorded every time a correction is made, so you can review the impact that
+  An activity of type "Corrected Email Address" is recorded every time a correction is made, so you can review the impact that
   this Email Amender is having on your database.<br/><br/>
 </p>
 
 
-{include file="CRM/Emailamender/Page/EmailAmenderSettingsTable.tpl" title='Top Level Domain Settings' data=$top_level_filter_settings filter_id="top_level_domain"}
+{include file="CRM/Emailamender/Page/EmailAmenderSettingsTable.tpl" title='Top Level Domain correction rules' data=$top_level_filter_settings filter_id="top_level_domain"}
 <br/><br/>
-{include file="CRM/Emailamender/Page/EmailAmenderSettingsTable.tpl" title='Second Level Domain Settings' data=$second_level_filter_settings filter_id="second_level_domain"}
+{include file="CRM/Emailamender/Page/EmailAmenderSettingsTable.tpl" title='Second Level Domain correction rules' data=$second_level_filter_settings filter_id="second_level_domain"}
 <br/><br/>
 <div id="compound_tld">
   <h3>{ts}Compound Top Level Domain Names{/ts}</h3>
