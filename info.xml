@@ -12,7 +12,7 @@
     <email>john@civifirst.com</email>
   </maintainer>
   <releaseDate>2016-11-20</releaseDate>
-  <version>3.0.0</version>
+  <version>3.0.1</version>
   <develStage>stable</develStage>
   <compatibility>
     <ver>4.7</ver>
