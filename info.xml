@@ -4,11 +4,7 @@
   <name>Email Address Corrector</name>
   <description>
     This extension allows automatic and manual correction of email addresses that are added to your database. i.e. john@hotmai.cpm is corrected to john@hotmail.com.
-    You can add, remove, and edit the correction settings under the Administrator -> System Settings -> Email Address Corrector menu.
-    Automatic email address correction is enabled or disabled at Administrator -> System Settings -> Email Address Corrector menu. It is disabled by default.
-    Existing email addresses aren't affected automatically, and the corrections only take place when they are added, not edited.
-    You can correct email addresses that are already in your CRM by using the new search result action "Email - correct email addresses".
-    You can also add email domain equivalents to the tool. We found that some contacts were being created when we had an @gmail.co.uk address registered for them, but there was an inbound email from @googlemail.co.uk. This will help prevent duplicate contacts.
+    Settings under Administrator -> System Settings -> Email Address Corrector. Automatic correction is disabled by default. Also supports domain equivalents to reduce duplicates. See comments.
   </description>
   <license>AGPL 3.0</license>
   <maintainer>
@@ -24,7 +20,12 @@
     <ver>5.22</ver>
   </compatibility>
   <category>Data Cleaning</category>
-  <comments>The email addresses were selected based on Future First's experience of common email errors.</comments>
+  <comments>
+    Existing email addresses aren't affected automatically. Corrections only take place when email addresses are added, not when they are edited.
+    You can correct email addresses that are already in your CRM by using the new search result action "Email - correct email addresses".
+    You can also add email domain equivalents to the tool. We found that some contacts were being created when we had an @gmail.co.uk address registered for them, but there was an inbound email from @googlemail.co.uk. This will help prevent duplicate contacts.
+    The email addresses were selected based on Future First's experience of common email errors.
+  </comments>
   <civix>
     <namespace>CRM/Emailamender</namespace>
   </civix>
