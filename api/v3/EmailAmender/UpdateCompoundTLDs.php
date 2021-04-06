@@ -25,7 +25,7 @@ function civicrm_api3_email_amender_update_compound_t_l_ds($params) {
 
   $aEscapedCorrections = [];
 
-  foreach( $params['compound_tlds'] as $compoundTLDs ){
+  foreach ($params['compound_tlds'] as $compoundTLDs) {
     $aEscapedCorrections[] = CRM_Core_DAO::escapeString($compoundTLDs);
   }
 

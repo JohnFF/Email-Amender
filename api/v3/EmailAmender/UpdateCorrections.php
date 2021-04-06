@@ -25,10 +25,10 @@ function _civicrm_api3_email_amender_update_corrections_spec(&$spec) {
 function civicrm_api3_email_amender_update_corrections($params) {
   $aEscapedCorrections = [];
 
-  foreach( $params['correction_keys'] as $index => $correctionKey ){
+  foreach ($params['correction_keys'] as $index => $correctionKey) {
     $aEscapedCorrections[CRM_Core_DAO::escapeString($correctionKey)] = CRM_Core_DAO::escapeString($params['correction_values'][$index]);
   }
-  switch($params['domain_level']){
+  switch ($params['domain_level']) {
     case 'top_level_domain':
       Civi::settings()->set('emailamender.top_level_domain_corrections', $aEscapedCorrections);
       break;
