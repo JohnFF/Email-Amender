@@ -19,7 +19,7 @@ class CRM_Emailamender_Upgrader extends CRM_Emailamender_Upgrader_Base {
     $this->ctx->log->info('Applying update 0001');
 
     // Check if the setting is already present
-    $aDomainEquivalents =  Civi::settings()->get('emailamender.equivalent_domains');
+    $aDomainEquivalents = Civi::settings()->get('emailamender.equivalent_domains');
     if ($aDomainEquivalents) {
       return TRUE;
     }

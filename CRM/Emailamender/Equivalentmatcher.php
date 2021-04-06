@@ -70,7 +70,7 @@ class CRM_Emailamender_Equivalentmatcher {
     $aEmailParts = explode('@', $email);
 
     // load settings and init
-    $aDomainEquivalents =  Civi::settings()->get('emailamender.equivalent_domains');
+    $aDomainEquivalents = Civi::settings()->get('emailamender.equivalent_domains');
 
     // Try equivalent e-mail domains, if there are any
     $aEquivalentDomainsToTry = self::getEquivalentDomainsFor($aEmailParts[1], $aDomainEquivalents);
