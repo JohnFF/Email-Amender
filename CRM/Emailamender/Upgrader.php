@@ -34,7 +34,7 @@ class CRM_Emailamender_Upgrader extends CRM_Emailamender_Upgrader_Base {
     Civi::settings()->set('equivalent_domains', $aDomainEquivalents);
 
     // Check if the setting is now present (as setItem returns void)
-    $aDomainEquivalents =  Civi::settings()->get('equivalent_domains');
+    $aDomainEquivalents = Civi::settings()->get('equivalent_domains');
     if ($aDomainEquivalents) {
       return TRUE;
     }

@@ -17,11 +17,7 @@ function _civicrm_api3_email_amender_batch_update_spec(&$spec) {
  * @param array $params
  *
  * @return array API result descriptor
- *    * @see civicrm_api3_create_success
- *
- * @throws API_Exception
-   *@throws \CiviCRM_API3_Exception
- *
+ * @see civicrm_api3_create_success
  */
 function civicrm_api3_email_amender_batch_update($params) {
   $candidates = civicrm_api3('EmailAmender', 'find_candidates', $params)['values'];
