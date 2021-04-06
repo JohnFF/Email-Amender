@@ -9,12 +9,11 @@ function input_box_change() {
   var filter_id = jQuery(this).attr('filter_id');
 
   var allPassedValidation = true;
-  var thisPassedValidation = true;
 
 // TODO only adjust messages for this one
 
   jQuery('#' + filter_id).find('input').each(function () {
-    thisPassedValidation = true;
+    var thisPassedValidation = true;
 
     // does it contain a full stop? if so bail
     if (jQuery(this).val().indexOf('.') >= 0 && jQuery(this).hasClass('correction_from') && filter_id != 'equivalent_domain') {
@@ -62,8 +61,8 @@ function delete_button() {
 function on_save() {
   var filter_id = jQuery(this).attr('filter_id');
 
-  var aInputValuesFrom = new Array();
-  var aInputValuesTo = new Array();
+  var aInputValuesFrom = [];
+  var aInputValuesTo = [];
 
   jQuery('#' + filter_id).find('.correction_from').each(function () {
     aInputValuesFrom.push(jQuery(this).val());
