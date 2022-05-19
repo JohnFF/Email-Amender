@@ -196,7 +196,6 @@ class CRM_Emailamender_IntegrationTest extends \PHPUnit\Framework\TestCase imple
     $this->ids['Contact'] = $this->ids['Contact'] ?? [];
     $duplicateActionTypes = [
       CRM_Import_Parser::DUPLICATE_SKIP,
-      CRM_Import_Parser::DUPLICATE_REPLACE,
       CRM_Import_Parser::DUPLICATE_UPDATE,
       CRM_Import_Parser::DUPLICATE_FILL,
       CRM_Import_Parser::DUPLICATE_NOCHECK,
