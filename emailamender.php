@@ -10,13 +10,6 @@ function emailamender_civicrm_config(&$config) {
 }
 
 /**
- * Implements hook_civicrm_xmlMenu().
- */
-function emailamender_civicrm_xmlMenu(&$files) {
-  _emailamender_civix_civicrm_xmlMenu($files);
-}
-
-/**
  * Implements hook_civicrm_install().
  */
 function emailamender_civicrm_install() {
@@ -62,16 +55,6 @@ function emailamender_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
 }
 
 /**
- * Implements hook_civicrm_managed().
- *
- * Generate a list of entities to create/deactivate/delete when this module
- * is installed, disabled, uninstalled.
- */
-function emailamender_civicrm_managed(&$entities) {
-  return _emailamender_civix_civicrm_managed($entities);
-}
-
-/**
  * Implements hook_civicrm_post().
  *
  * Amends the emails after creation according to the stored amender settings.
@@ -91,15 +74,6 @@ function emailamender_civicrm_post($op, $objectName, $id, &$params) {
  */
 function emailamender_civicrm_emailProcessorContact($email, $contactID, &$result) {
   CRM_Emailamender_Equivalentmatcher::processHook($email, $contactID, $result);
-}
-
-/**
- * Implements hook_civicrm_alterSettingsFolders().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
- */
-function emailamender_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _emailamender_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
 /**
@@ -144,16 +118,19 @@ function emailamender_civicrm_searchTasks($objectType, &$tasks) {
 }
 
 /**
- * Implements hook_civicrm_angularModules().
+ * Implements hook_civicrm_postInstall().
  *
- * Generate a list of Angular modules.
- * Generate a list of Angular modules.
- *
- * Note: This hook only runs in CiviCRM 4.5+. It may
- * use features only available in v4.6+.
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_angularModules
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postInstall
  */
-function emailamender_civicrm_angularModules(&$angularModules) {
-  _emailamender_civix_civicrm_angularModules($angularModules);
+function emailamender_civicrm_postInstall() {
+  _emailamender_civix_civicrm_postInstall();
+}
+
+/**
+ * Implements hook_civicrm_entityTypes().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
+ */
+function emailamender_civicrm_entityTypes(&$entityTypes) {
+  _emailamender_civix_civicrm_entityTypes($entityTypes);
 }
