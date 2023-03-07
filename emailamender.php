@@ -31,7 +31,7 @@ function emailamender_civicrm_uninstall() {
 
   CRM_Core_DAO::executeQuery("DELETE FROM civicrm_setting WHERE name LIKE 'emailamender%'");
 
-  return _emailamender_civix_civicrm_uninstall();
+  return;
 }
 
 /**
@@ -39,20 +39,6 @@ function emailamender_civicrm_uninstall() {
  */
 function emailamender_civicrm_enable() {
   return _emailamender_civix_civicrm_enable();
-}
-
-/**
- * Implements hook_civicrm_disable().
- */
-function emailamender_civicrm_disable() {
-  return _emailamender_civix_civicrm_disable();
-}
-
-/**
- * Implements hook_civicrm_upgrade().
- */
-function emailamender_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _emailamender_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
@@ -116,22 +102,4 @@ function emailamender_civicrm_searchTasks($objectType, &$tasks) {
       'result' => TRUE,
     );
   }
-}
-
-/**
- * Implements hook_civicrm_postInstall().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postInstall
- */
-function emailamender_civicrm_postInstall() {
-  _emailamender_civix_civicrm_postInstall();
-}
-
-/**
- * Implements hook_civicrm_entityTypes().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
- */
-function emailamender_civicrm_entityTypes(&$entityTypes) {
-  _emailamender_civix_civicrm_entityTypes($entityTypes);
 }
