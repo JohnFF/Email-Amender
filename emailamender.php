@@ -19,6 +19,7 @@ function emailamender_civicrm_install() {
     'weight'       => '1',
     'description'  => 'Automatically corrected emails (by the Email Address Corrector extension).',
     'option_group_id' => 'activity_type',
+    'filter' => 1,
   ]);
   return _emailamender_civix_civicrm_install();
 }
