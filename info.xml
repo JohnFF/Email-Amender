@@ -26,7 +26,7 @@
   </comments>
   <civix>
     <namespace>CRM/Emailamender</namespace>
-    <format>23.02.0</format>
+    <format>23.02.1</format>
   </civix>
   <url desc="documentation">https://github.com/JohnFF/Email-Amender/wiki</url>
   <mixins>
@@ -36,6 +36,7 @@
   </mixins>
   <classloader>
     <psr0 prefix="CRM_" path="."/>
+    <psr4 prefix="Civi\" path="Civi"/>
   </classloader>
   <upgrader>CRM_Emailamender_Upgrader</upgrader>
 </extension>
