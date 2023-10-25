@@ -3,7 +3,6 @@
 use Civi\Api4\Domain;
 use CRM_Emailamender_ExtensionUtil as E;
 
-
 $menuItems = [];
 $domains = Domain::get(FALSE)
   ->addSelect('id')
