@@ -2,6 +2,8 @@
 
 require_once 'emailamender.civix.php';
 
+use CRM_Emailamender_ExtensionUtil as E;
+
 /**
  * Implements hook_civicrm_config().
  */
@@ -14,7 +16,7 @@ function emailamender_civicrm_config(&$config) {
  */
 function emailamender_civicrm_install() {
   CRM_Core_BAO_OptionValue::ensureOptionValueExists([
-    'label'        => 'Corrected Email Address',
+    'label'        => E::ts('Corrected Email Address'),
     'name'         => 'corrected_email_address',
     'weight'       => '1',
     'description'  => 'Automatically corrected emails (by the Email Address Corrector extension).',
