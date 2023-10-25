@@ -15,7 +15,7 @@
   <version>3.3.1</version>
   <develStage>stable</develStage>
   <compatibility>
-    <ver>5.52</ver>
+    <ver>5.66</ver>
   </compatibility>
   <category>Data Cleaning</category>
   <comments>
