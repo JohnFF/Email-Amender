@@ -60,8 +60,12 @@ function emailamender_civicrm_searchTasks($objectType, &$tasks) {
  * @param array $permissions
  */
 function emailamender_civicrm_permission(&$permissions) {
-  $permissions['email_amender'] = [
+  $permissions['administer_email_amender'] = [
     E::ts('Email Amender'),
     E::ts('configure email corrections'),
   ];
+}
+
+function emailamender_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+  $permissions['email_amender']['default'] = 'administer_email_amender';
 }

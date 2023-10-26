@@ -14,7 +14,8 @@ class CRM_Emailamender_Page_EmailAmenderSettings extends CRM_Core_Page {
     $this->assign('compound_top_level_domains', Civi::settings()->get('emailamender.compound_top_level_domains'));
 
     $this->assign('equivalent_domain_settings', Civi::settings()->get('emailamender.equivalent_domains'));
-
+    $this->assign('hasEditPermission', CRM_Core_Permission::check('administer_email_amender'));
+    $this->assign('hasEnablePermission', CRM_Core_Permission::check('administer CiviCRM'));
     parent::run();
   }
 }
