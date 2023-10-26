@@ -1,5 +1,5 @@
 {if !$hasEditPermission}
-  <div><h2>{ts}You do not have the permission EmailAmender:configure email corrections so this table is view only.{/ts}</h2></div>
+  <div><h2>{ts}You do not have the permission EmailAmender:administer email corrections so this table is view only.{/ts}</h2></div>
 {/if}
 
 <div class="crm-block crm-form-block crm-email-amender-form-block">
