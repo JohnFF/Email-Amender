@@ -11,7 +11,7 @@ This can increase the reach of your mass mailings and can prevent your organisat
 * Automatic correction of email addresses is disabled by default, to give you a chance to review the rules before enabling it.
 * These settings are available under Administrator -> System Settings -> Email Address Corrector Settings.
 
-### 2. Mass correction of existing email addresses. 
+### 2. Mass correction of existing email addresses.
 * This extension also offers mass updating of existing email through the "Email - correct email addresses" advanced search task.
 * Uses the correction rules set under Administrator -> System Settings -> Email Address Corrector Settings.
 

@@ -1,5 +1,6 @@
 <div id="{$filter_id}">
-<h3>{ts}{$title}{/ts}</h3>
+<h3>{ts}{$title|escape}{/ts}</h3>
+
 <p>
   {ts}When an e-mail arrives from an address for which there is no existing
   contact in the system, normally a new contact is created with that
@@ -21,25 +22,29 @@
   It does not change any existing data for a contact.{/ts}
 </p>
 <table id="{$filter_id}_table">
-        <th>{ts}Group identifier{/ts}</th>
-        <th>{ts}Equivalent domain{/ts}</th>
-        <th>{ts}Options{/ts}</th>
+  <th>{ts}Group identifier{/ts}</th>
+  <th>{ts}Equivalent domain{/ts}</th>
+  <th>{ts}Options{/ts}</th>
 {foreach from=$data key=find item=replaceWith}
-<tr>
-        <td style="max-width: 43% !important; min-width: 43% !important; width: 43% !important;">    
-                <input type="text" value="{$replaceWith}" originalValue="{$find}" filter_id="{$filter_id}" class="correction_to">
-		<span class="error_msg"></span>
-        </td>   
-        <td style="max-width: 43% !important; min-width: 43% !important; width: 43% !important;">    
-                <input type="text" value="{$find}" originalValue="{$find}" filter_id="{$filter_id}" class="correction_from">
-		<span class="error_msg" style="display: none"></span>
-        </td>   
-        <td>    
-                <a href="#" class="deleteButton" filter_id="{$filter_id}">Delete this equivalent</a> 
-        </td>   
-</tr>
+  <tr>
+    <td style="max-width: 43% !important; min-width: 43% !important; width: 43% !important;">
+      <input type="text" {if !$hasEditPermission} disabled="true" {/if} value="{$replaceWith}" originalValue="{$find}" filter_id="{$filter_id}" class="correction_to">
+      <span class="error_msg"></span>
+    </td>
+    <td style="max-width: 43% !important; min-width: 43% !important; width: 43% !important;">
+      <input type="text" {if !$hasEditPermission} disabled="true" {/if} value="{$find}" originalValue="{$find}" filter_id="{$filter_id}" class="correction_from">
+      <span class="error_msg" style="display: none"></span>
+    </td>
+    <td>
+      {if $hasEditPermission}
+      <a href="#" class="deleteButton" filter_id="{$filter_id}">Delete this equivalent</a>
+      {/if}
+    </td>
+  </tr>
 {/foreach}
 </table>
-<input class="add_new_equivalent" type="button" value="Add new equivalent" filter_id="{$filter_id}"></input>
-<input class="save_correction_changes save_changes_button" type="button" value="{ts}Save changes{/ts}" style="display: none" filter_id="{$filter_id}"></input>
+  {if $hasEditPermission}
+    <input class="add_new_equivalent" type="button" value="Add new equivalent" filter_id="{$filter_id}"></input>
+    <input class="save_correction_changes save_changes_button" type="button" value="{ts}Save changes{/ts}" style="display: none" filter_id="{$filter_id}"></input>
+  {/if}
 </div>

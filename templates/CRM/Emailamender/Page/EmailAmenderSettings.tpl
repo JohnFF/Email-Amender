@@ -1,11 +1,19 @@
+{if !$hasEditPermission}
+  <div><h2>{ts}You do not have the permission EmailAmender:administer email corrections so this table is view only.{/ts}</h2></div>
+{/if}
+
+<div class="crm-block crm-form-block crm-email-amender-form-block">
 <p>{ts}When the Enable Automatic Email Corrections setting below is checked, email addresses are corrected automatically as they are added. So
     <strong>john@hotmai.cpm</strong>
     would be corrected to
     <strong>john@hotmail.com</strong>
   {/ts}</p><br/>
 <div style="text-align: center; width: 100%">
-  <input style="margin: auto;" type="checkbox"
-         id="email_amender_enabled" {if $email_amender_enabled eq "true"} checked="checked" {/if}>{ts}Enable automatic email corrections.{/ts}
+  <input style="margin: auto;" type="checkbox" id="email_amender_enabled"
+    {if $email_amender_enabled eq "true"} checked="checked" {/if}
+    {if !$hasEnablePermission} disabled="true" {/if}
+  >
+    {ts}Automatic email corrections enabled.{/ts}{if !$hasEnablePermission} ({ts}You do not have permission to change this{/ts}){/if}
 </div>
 <br/>
 <p>The Email Address Corrector has been designed not to affect edits made to any email addresses, or to change any email addresses
@@ -34,20 +42,23 @@
 <div id="compound_tld">
   <h3>{ts}Compound Top Level Domain Names{/ts}</h3>
   {ts}"Compound" Top Level Domain Names indicate second level domain names that are usually treated as part of the first. For instance, in the case of the incorrect email address john@gmai.co.uk, we want to repair the 'gmai', not the 'co'.{/ts}
-  <table id="compound_tld_table">
+  <table id="compound_tld_table" class="form-layout">
     <th>Compound Domain Name</th>
     <th>Options</th>
     {foreach from=$compound_top_level_domains item=compoundTld}
       <tr>
-        <td><input type="text" value="{$compoundTld}" filter_id="compound_tld"></input></td>
-        <td><a href="#" class="deleteButton" filter_id="compound_tld">{ts}Delete this compound tld{/ts}</a></td>
+        <td><input type="text" value="{$compoundTld}" filter_id="compound_tld" {if !$hasEditPermission} disabled="true" {/if}></input></td>
+        <td>{if $hasEditPermission}<a href="#" class="deleteButton" filter_id="compound_tld">{ts}Delete this compound tld{/ts}</a>{/if}</td>
       </tr>
     {/foreach}
   </table>
-  <input class="add_new_compound_tld" type="button" value="Add new compound tld" filter_id="compound_tld"></input>
-  <input class="save_tld_changes save_changes_button" type="button" value="Save changes" style="display: none"
-         filter_id="compound_tld"></input>
+  {if $hasEditPermission}
+    <input class="add_new_compound_tld" type="button" value="Add new compound tld" filter_id="compound_tld" {if !$hasEditPermission} disabled="true" {/if}></input>
+    <input class="save_tld_changes save_changes_button" type="button" value="Save changes" style="display: none"
+       filter_id="compound_tld"></input>
+  {/if}
 </div>
 <br/><br/>
 {include file="CRM/Emailamender/Page/EquivalentsTable.tpl" title='Equivalent Domains' data=$equivalent_domain_settings filter_id="equivalent_domain"}
-{crmScript ext=uk.org.futurefirst.networks.emailamender file=templates/CRM/Emailamender/Page/EmailAmenderSettings.js}
+{crmScript ext='uk.org.futurefirst.networks.emailamender' file='templates/CRM/Emailamender/Page/EmailAmenderSettings.js'}
+</div>
